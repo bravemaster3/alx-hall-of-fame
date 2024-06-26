@@ -1,0 +1,54 @@
+### DISPLAYING ALL USERS
+GET http://localhost:8000/users
+Content-Type: application/json
+
+{}
+
+### DELETING A USER
+DELETE http://localhost:8000/users/2
+Content-Type: application/json
+
+{}
+
+### Test JWT token
+GET http://localhost:8000/test_token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE5MDU0MzkzLCJpYXQiOjE3MTkwMzMzMDAsImp0aSI6ImQ2MTJlYzY5YmE0NjRkOGRiNzVkZjAyZTNlZmMxODA3IiwidXNlcl9pZCI6M30.bZO-QdHeWRdvNlMjrSsj3PBFKenydagKwcUV6adRwQk
+
+
+### Trying to post something on behalf of user 3
+POST http://localhost:8000/projects/create_with_token/
+
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE5MDU0MzkzLCJpYXQiOjE3MTkwMzMzMDAsImp0aSI6ImQ2MTJlYzY5YmE0NjRkOGRiNzVkZjAyZTNlZmMxODA3IiwidXNlcl9pZCI6M30.bZO-QdHeWRdvNlMjrSsj3PBFKenydagKwcUV6adRwQk
+
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="projectTitle"
+
+My New Project
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="authors"
+
+John Doe, Jane Smith
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+This is a new project description.
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tags"
+
+Tag1, Tag2
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="githubRepos"
+
+https://github.com/myusername/myproject
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="liveProject"
+
+https://myproject.com
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="imgFile"; filename="project_image.jpg"
+Content-Type: image/jpeg
+
+[Binary image data]
+----WebKitFormBoundary7MA4YWxkTrZu0gW--
