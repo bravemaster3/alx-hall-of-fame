@@ -133,12 +133,38 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': '',  # Leave empty for default port (5432)
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'alxhof',
+#         'USER': 'alxhof_admin',
+#         'PASSWORD': 'GX9NecQZvI2fuhputQXgNA',
+#         'HOST': 'alxhof-14252.8nj.gcp-europe-west1.cockroachlabs.cloud',
+#         'PORT': '26257',
+#         'OPTIONS': {
+#             'sslmode': 'verify-full',
+#             # 'sslrootcert': '<path-to-your-ca-cert>',  # If you have a CA certificate file
+#         },
+#     }
+# }
+
 
 
 # Password validation
@@ -199,7 +225,9 @@ USE_TZ = True
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") 
 
-
+# Media files (Uploads)
+MEDIA_URL = '/project_images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

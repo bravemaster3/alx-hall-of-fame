@@ -4,7 +4,7 @@ import { FaXTwitter } from "react-icons/fa6"
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-gainsboro dark:bg-dark-steelblue py-6">
+    <footer className="w-full bg-gainsboro dark:bg-dark-steelblue py-6 mt-auto">
       <div className="flex flex-col items-center justify-center space-y-4">
         {/* First Row */}
         <div className="flex space-x-4">

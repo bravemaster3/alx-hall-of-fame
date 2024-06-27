@@ -7,6 +7,8 @@ export default function ProjectCategoryAdd({
   handleOpenModal,
   setActiveTab,
   activeTab,
+  // fetchProjects,
+  githubUsername,
 }) {
   return (
     <div className="min-h-[41px] self-stretch flex flex-row flex-wrap items-center justify-center gap-[9.8px] min-w-[67%] max-w-full">
@@ -19,6 +21,7 @@ export default function ProjectCategoryAdd({
           }`}
           onClick={() => {
             setActiveTab("All Projects")
+            // fetchProjects()
             onFrameContainerClick()
           }}
         >
@@ -31,6 +34,7 @@ export default function ProjectCategoryAdd({
           }`}
           onClick={() => {
             setActiveTab("My Projects")
+            // fetchProjects(githubUsername)
             onFrameContainerClick()
           }}
         >

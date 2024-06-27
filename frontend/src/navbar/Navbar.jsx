@@ -5,6 +5,7 @@ import axios from "axios"
 import GithubAvatar from "./GithubAvatar"
 import GithubBtn from "./GithubBtn"
 import DarkModeToggle from "./DarkModeToggle"
+import { backendURL, frontendURL } from "../../constants"
 
 export default function Navbar({ onLoginClick }) {
   // const [user, setUser] = useState(
@@ -30,7 +31,7 @@ export default function Navbar({ onLoginClick }) {
 
     try {
       const response = await axios.get(
-        `http://localhost:8000/callback?code=${authCode}`
+        `${backendURL}/callback?code=${authCode}`
       )
       // setUser(response.data)
       const userData = response.data
@@ -42,9 +43,9 @@ export default function Navbar({ onLoginClick }) {
       usedCodes.current.add(authCode)
 
       // Redirect to the desired URL after successful login
-      // setTimeout(() => {
-      window.location.href = "http://localhost:5173"
-      // }, 1000) // Small delay to ensure backend completes response sending
+      setTimeout(() => {
+        window.location.href = `${frontendURL}`
+      }, 100) // Small delay to ensure backend completes response sending
     } catch (error) {
       console.error("Error logging in:", error)
     }

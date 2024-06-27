@@ -114,6 +114,8 @@ def github_callback(request):
             full_name = user_data.get("name")
             avatar_url = user_data.get("avatar_url")
             location = user_data.get('location')
+            if not location:
+                location = ""
 
             email_response = requests.get(
                 'https://api.github.com/user/emails',
