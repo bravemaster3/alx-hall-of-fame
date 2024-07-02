@@ -218,5 +218,10 @@ export default {
   corePlugins: {
     preflight: false,
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
+  variants: {
+    scrollbar: ['rounded', 'dark'], // Enable variants for scrollbar
+  },
 }

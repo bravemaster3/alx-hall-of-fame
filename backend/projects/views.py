@@ -1,13 +1,14 @@
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.exceptions import TokenError
 from django.contrib.auth.models import User
-from .models import Project
-from .serializers import ProjectSerializer
+from .models import Project, Comment
+from .serializers import ProjectSerializer, CommentSerializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
 import logging
+from django.shortcuts import get_object_or_404
 
 
 logger = logging.getLogger(__name__)
@@ -79,49 +80,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             logger.error(f"An unexpected error occurred: {str(e)}")
             return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # def create_with_token(self, request, *args, **kwargs):
-    #     auth_header = request.headers.get('Authorization')
-        
-    #     if not auth_header or not auth_header.startswith('Bearer '):
-    #         return Response({"error": "No access token provided"}, status=status.HTTP_400_BAD_REQUEST)
-        
-    #     access_token_str = auth_header.split(' ')[1]
-        
-    #     try:
-    #         access_token = AccessToken(access_token_str)
-    #         user_id = access_token['user_id']
-    #         user = User.objects.get(id=user_id)
-            
-    #         if user.is_authenticated:
-    #             request.user = user  # Set the user in the request
-    #             # Include the user in the request data
-    #             request.data._mutable = True  # Allow modification of request data
-    #             request.data['user'] = user.id
-    #             request.data._mutable = False
-    #             print("CREATE WITH TOKEN ----- USER: ", request.user)
-                
-    #             # Initialize the serializer with the request data
-    #             serializer = self.get_serializer(data=request.data, context={'request': request})
-                
-    #             # Check if the data is valid
-    #             if serializer.is_valid(raise_exception=True):
-    #                 self.perform_create(serializer)
-    #                 headers = self.get_success_headers(serializer.data)
-    #                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    #             else:
-    #                 # Log the serializer errors
-    #                 logger.error(f"Serializer errors: {serializer.errors}")
-    #                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    #         else:
-    #             return Response({"error": "User is not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
-    #     except TokenError as e:
-    #         return Response({"error": f"Token error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-    #     except User.DoesNotExist:
-    #         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    #     except Exception as e:
-    #         logger.error(f"An unexpected error occurred: {str(e)}")
-    #         return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -129,12 +87,54 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # This method should not be called directly, instead use create_with_token
         return Response({"error": "Use the create_with_token endpoint"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+    # @action(detail=True, methods=['get', 'post'])
+    # def comments(self, request, pk=None):
+    #     project = self.get_object()
+    #     # print('REACHED HERE')
+    #     if request.method == 'GET':
+    #         comments = Comment.objects.filter(project=project)
+    #         serializer = CommentSerializer(comments, many=True)
+    #         return Response(serializer.data)
+    #     elif request.method == 'POST':
+    #         serializer = CommentSerializer(data=request.data)
+    #         print('SERIALIZER VALIDITY: ', serializer.is_valid())
+    #         if serializer.is_valid():
+    #             serializer.save(user=request.user, project=project)
+    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    
     def get_permissions(self):
-        if self.action == 'create_with_token':  # Only allow POST method for creating new projects with token
+        if self.action in ['create_with_token', 'update', 'destroy']:  # Only allow POST method for creating new projects with token
             return [permissions.IsAuthenticated()]
         elif self.action in ['list', 'retrieve']:  # Allow GET method for listing and retrieving projects
             return [permissions.AllowAny()]
         return super(ProjectViewSet, self).get_permissions()
+    
+    
+    def destroy(self, request, *args, **kwargs):
+        # Only allow DELETE if the user is authenticated
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+        # Check if the user is the owner of the project
+        project = self.get_object()
+        if request.user != project.user:
+            return Response({"detail": "You do not have permission to delete this project."}, status=status.HTTP_403_FORBIDDEN)
+
+        return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        # Only allow DELETE if the user is authenticated
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+        # Check if the user is the owner of the project
+        project = self.get_object()
+        if request.user != project.user:
+            return Response({"detail": "You do not have permission to edit this project."}, status=status.HTTP_403_FORBIDDEN)
+
+        return super(ProjectViewSet, self).update(request, *args, **kwargs)
 
     @action(detail=False, url_path='user/(?P<github_username>.+)')
     def user_projects(self, request, github_username=None):
@@ -146,150 +146,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import viewsets, permissions, status
-# from .models import Project
-# from .serializers import ProjectSerializer
-# from rest_framework.decorators import action
-# import logging
-# from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-# from  rest_framework.decorators import authentication_classes, permission_classes
-# from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-# from django.contrib.auth import get_user_model
+# class CommentViewSet(viewsets.ModelViewSet):
+#     queryset = Comment.objects.all().order_by('-created_at')
+#     serializer_class = CommentSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-# User = get_user_model()
-
-
-# def get_new_access_token(refresh_token):
-#     try:
-#         refresh = RefreshToken(refresh_token)
-#         access_token = str(refresh.access_token)
-#         return access_token
-#     except Exception as e:
-#         # Handle any exceptions (e.g., token expired, invalid token)
-#         return None
-
-# logger = logging.getLogger(__name__)
-
-# class ProjectViewSet(viewsets.ModelViewSet):
-#     queryset = Project.objects.all()
-#     serializer_class = ProjectSerializer
-#     # authentication_classes = [JWTAuthentication]
-#     # permission_classes = [permissions.IsAuthenticated]
-
-#     @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-#     # @authentication_classes([SessionAuthentication, TokenAuthentication])
-#     # @permission_classes([permissions.IsAuthenticated])
-#     def create_with_token(self, request, *args, **kwargs):
-#         auth_header = request.headers.get('Authorization')
-#         access_token_str = auth_header.split(' ')[1]
-#         # print("TOKEN.???????????: ", access_token_str)
-#         try:
-#             access_token = AccessToken(access_token_str)
-#             user_id = access_token['user_id']
-#             user = User.objects.get(id=user_id)
-            
-#             if user.is_authenticated:
-#                 request.user = user  # Set the user in the request
-                
-#                 return self.create(request, *args, **kwargs)
-#             else:
-#                 return Response({"error": "User is not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
-#         except Exception:
-#             pass
-
+#     # @action(detail=True, methods=['get', 'post', 'put'])
 #     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
+#         project_id = self.kwargs['project_pk']
+#         project = get_object_or_404(Project, id=project_id)
+#         serializer.save(user=self.request.user, project=project)
 
-#     def create(self, request, *args, **kwargs):
-#         # logger.debug(request)
-#         serializer = self.get_serializer(data=request.data)
-#         # print("SERIALIZED REQUEST DATA: ", serializer)
-#         # serializer.is_valid(raise_exception=True)
-        
-#         self.perform_create(serializer)
-#         print("REACHEDHERE")
-#         headers = self.get_success_headers(serializer.data)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-#     def get_permissions(self):
-#         if self.action == 'create':  # Only allow POST method for creating new projects
-#             return [permissions.IsAuthenticated()]
-#         elif self.action in ['list', 'retrieve']:  # Allow GET method for listing and retrieving projects
-#             return [permissions.AllowAny()]
-#         return super(ProjectViewSet, self).get_permissions()
+    def get_queryset(self):
+        # Get the project_id from the URL
+        project_pk = self.kwargs['project_pk']
+        # Filter comments by project
+        return Comment.objects.filter(project_id=project_pk).order_by('-created_at')
 
-#     @action(detail=False, url_path='user/(?P<github_username>.+)')
-#     def user_projects(self, request, github_username=None):
-#         projects = self.get_queryset().filter(user__username=github_username)
-#         serializer = self.get_serializer(projects, many=True)
-#         return Response(serializer.data)
-
-
-# ##########################################################################################
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import viewsets, permissions, status
-# from .models import Project
-# from .serializers import ProjectSerializer
-# from rest_framework.decorators import action
-# import logging
-# from rest_framework_simplejwt.tokens import RefreshToken
-
-
-# def get_new_access_token(refresh_token):
-#     try:
-#         refresh = RefreshToken(refresh_token)
-#         access_token = str(refresh.access_token)
-#         return access_token
-#     except Exception as e:
-#         # Handle any exceptions (e.g., token expired, invalid token)
-#         return None
-
-# logger = logging.getLogger(__name__)
-# # from django.views.decorators.csrf import csrf_exempt
-
-# class ProjectViewSet(viewsets.ModelViewSet):
-#     queryset = Project.objects.all()
-#     serializer_class = ProjectSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-
-#     def post(self, request):
-#         # Assuming the frontend sends the refresh token in the request
-#         refresh_token = request.data.get('refresh_token')
-
-#         # Get a new access token
-#         new_access_token = get_new_access_token(refresh_token)
-
-#         if new_access_token:
-#             # Use the new access token for further actions (e.g., create project)
-#             # ...
-#             return Response({"message": "Project created successfully"}, status=status.HTTP_201_CREATED)
-        
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
-
-#     def create(self, request, *args, **kwargs):
-#         logger.debug(request)
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_create(serializer)
-#         headers = self.get_success_headers(serializer.data)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
-#     def get_permissions(self):
-#         if self.action == 'create':  # Only allow POST method for creating new projects
-#             return [permissions.IsAuthenticated()]
-#         elif self.action in ['list', 'retrieve']:  # Allow GET method for listing and retrieving projects
-#             return [permissions.AllowAny()]
-#         return super(ProjectViewSet, self).get_permissions()
-
-#     # @csrf_exempt
-#     @action(detail=False, url_path='user/(?P<github_username>.+)')
-#     def user_projects(self, request, github_username=None):
-#         projects = self.get_queryset().filter(user__username=github_username)
-#         serializer = self.get_serializer(projects, many=True)
-#         return Response(serializer.data)
+    def perform_create(self, serializer):
+        project_pk = self.kwargs['project_pk']
+        project = get_object_or_404(Project, id=project_pk)
+        serializer.save(user=self.request.user, project=project)

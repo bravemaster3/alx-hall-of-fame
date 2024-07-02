@@ -6,6 +6,7 @@ import FormInput from "./FormInput"
 import FormTextField from "./FormTextField"
 import UploadField from "./UploadFile"
 import axios from "axios"
+import { backendURL } from "../../constants"
 
 const ModalAddProject = ({ open, onClose, className = "" }) => {
   const [formData, setFormData] = useState({
@@ -57,7 +58,7 @@ const ModalAddProject = ({ open, onClose, className = "" }) => {
     console.log("JWT TOKEN", accessToken)
     try {
       const response = await axios.post(
-        "http://localhost:8000/projects/create_with_token/",
+        `${backendURL}/api/projects/create_with_token/`,
         formDataToSend,
         {
           headers: {

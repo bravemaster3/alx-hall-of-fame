@@ -33,7 +33,7 @@ urlpatterns = [
     path('callback', views.github_callback, name='github_callback'),
     path('users', views.all_users, name='all_users'),
     path('users/<int:user_id>', views.get_user, name='specific_user'),
-    path('projects/', include('projects.urls'))
+    path('api/', include('projects.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

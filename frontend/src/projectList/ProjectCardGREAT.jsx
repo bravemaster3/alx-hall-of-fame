@@ -4,11 +4,9 @@ import {
   FaExternalLinkAlt,
   FaThumbsUp,
   FaComment,
-  FaEdit,
-  FaTrash,
 } from "react-icons/fa"
-import { Box, Modal, Typography, Button } from "@mui/material"
-import axios from "axios"
+import { Box, Modal, Typography } from "@mui/material"
+import axios from "axios" // Import axios for API requests
 import { backendURL } from "../../constants"
 
 const ProjectCard = ({
@@ -27,8 +25,6 @@ const ProjectCard = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [comments, setComments] = useState([])
-  const [editingCommentId, setEditingCommentId] = useState(null)
-  const [editContent, setEditContent] = useState("")
 
   useEffect(() => {
     if (isModalOpen) {
@@ -41,15 +37,16 @@ const ProjectCard = ({
       const response = await axios.get(
         `${backendURL}/api/projects/${id}/comments/`
       )
+      console.log("Fetched comments:", response.data) // Log the fetched data
       if (Array.isArray(response.data)) {
         setComments(response.data)
       } else {
         console.error("Unexpected data format:", response.data)
-        setComments([])
+        setComments([]) // Default to empty array if data format is incorrect
       }
     } catch (error) {
       console.error("Error fetching comments:", error)
-      setComments([])
+      setComments([]) // Default to empty array on error
     }
   }
 
@@ -72,7 +69,9 @@ const ProjectCard = ({
     try {
       const response = await axios.post(
         `${backendURL}/api/projects/${id}/comments/`,
-        { content: newComment },
+        {
+          content: newComment,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -81,61 +80,9 @@ const ProjectCard = ({
         }
       )
       setComments([...comments, response.data])
-      setNewComment("")
+      setNewComment("") // Clear the input field
     } catch (error) {
       console.error("Error adding comment:", error)
-    }
-  }
-
-  const handleEditComment = (commentId, content) => {
-    setEditingCommentId(commentId)
-    setEditContent(content)
-  }
-
-  const handleUpdateComment = async (e) => {
-    e.preventDefault()
-    const userInfo = JSON.parse(localStorage.getItem("user"))
-    const accessToken = userInfo.token
-    try {
-      await axios.put(
-        `${backendURL}/api/projects/${id}/comments/${editingCommentId}/`,
-        { content: editContent },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      setComments(
-        comments.map((comment) =>
-          comment.id === editingCommentId
-            ? { ...comment, content: editContent }
-            : comment
-        )
-      )
-      setEditingCommentId(null)
-      setEditContent("")
-    } catch (error) {
-      console.error("Error updating comment:", error)
-    }
-  }
-
-  const handleDeleteComment = async (commentId) => {
-    const userInfo = JSON.parse(localStorage.getItem("user"))
-    const accessToken = userInfo.token
-    try {
-      await axios.delete(
-        `${backendURL}/api/projects/${id}/comments/${commentId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      setComments(comments.filter((comment) => comment.id !== commentId))
-    } catch (error) {
-      console.error("Error deleting comment:", error)
     }
   }
 
@@ -262,36 +209,14 @@ const ProjectCard = ({
           </Typography>
           {comments && Array.isArray(comments) ? (
             comments.map((comment) => (
-              <div key={comment.id} className="p-4 mb-2 bg-gainsboro rounded">
-                <Typography
-                  variant="body2"
-                  className="text-gray-300 dark:text-dark-gray-300"
-                >
-                  {comment.user.username}: {comment.content}
-                </Typography>
-                {localStorage.getItem("user") &&
-                  comment.user.id ===
-                    JSON.parse(localStorage.getItem("user")).id && (
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() =>
-                          handleEditComment(comment.id, comment.content)
-                        }
-                      >
-                        <FaEdit /> Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => handleDeleteComment(comment.id)}
-                      >
-                        <FaTrash /> Delete
-                      </Button>
-                    </div>
-                  )}
-              </div>
+              <Typography
+                variant="body2"
+                key={comment.id}
+                gutterBottom
+                className="text-gray-300 dark:text-dark-gray-300"
+              >
+                {comment.user.username}: {comment.content}
+              </Typography>
             ))
           ) : (
             <Typography
@@ -302,34 +227,25 @@ const ProjectCard = ({
             </Typography>
           )}
           {localStorage.getItem("user") && (
-            <form
-              onSubmit={
-                editingCommentId ? handleUpdateComment : handleAddComment
-              }
-              className="w-full"
-            >
+            <form onSubmit={handleAddComment} className="w-full">
               <label
                 className="block text-gray-300 dark:text-dark-gray-300 mb-2"
                 htmlFor="comment"
               >
-                {editingCommentId ? "Edit comment" : "Add a comment"}
+                Add a comment
               </label>
               <textarea
                 id="comment"
                 type="text"
-                value={editingCommentId ? editContent : newComment}
-                onChange={(e) =>
-                  editingCommentId
-                    ? setEditContent(e.target.value)
-                    : handleCommentChange(e)
-                }
+                value={newComment}
+                onChange={handleCommentChange}
                 className="w-full h-10 p-2 mb-4 pr-[2px] border border-gray-300 dark:border-dark-gray-300 rounded bg-white dark:bg-dark-white text-gray-300 dark:text-dark-gray-300 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500"
               />
               <button
                 type="submit"
                 className="max-w-full flex-shrink-0 h-[41px] px-4 border-[1px] border-black dark:border-none bg-white dark:bg-dark-steelblue dark:text-dark-black shadow-0px-1px-2px-rgba(0,0,0,0.05) rounded cursor-pointer flex items-center justify-center"
               >
-                {editingCommentId ? "Update" : "Submit"}
+                Submit
               </button>
             </form>
           )}

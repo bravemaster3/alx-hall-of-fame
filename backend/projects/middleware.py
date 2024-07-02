@@ -52,7 +52,7 @@ class LoggingMiddleware:
 
     def __call__(self, request):
         request.user = SimpleLazyObject(lambda: get_user_jwt(request))
-        logger.debug(f"Request method: {request.method}")
+        ## logger.debug(f"Request method: {request.method}")
         logger.debug(f"Request path: {request.path}")
         # logger.debug(f"User authenticated: {request.user.is_authenticated}")
         logger.debug(f"JWT token: {request.headers.get('Authorization')}")

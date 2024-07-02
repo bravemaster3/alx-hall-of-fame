@@ -10,7 +10,6 @@ import {
 } from "@mui/material"
 import { IoLogoGithub } from "react-icons/io"
 import { MdDarkMode } from "react-icons/md"
-import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import GithubAvatar from "./GithubAvatar"
 import GithubBtn from "./GithubBtn"
@@ -22,9 +21,6 @@ export default function Navbar({ onLoginClick }) {
     const storedUser = localStorage.getItem("user")
     return storedUser ? JSON.parse(storedUser) : { is_authenticated: false }
   })
-
-  const [anchorEl, setAnchorEl] = useState(null)
-  const navigate = useNavigate()
 
   const [startAuth, setStartAuth] = useState(false)
   const [code, setCode] = useState(null)
@@ -73,24 +69,8 @@ export default function Navbar({ onLoginClick }) {
     setUser({ is_authenticated: false })
   }
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handleNavigation = (path) => {
-    handleMenuClose()
-    navigate(path)
-  }
-
   return (
-    <AppBar
-      position="sticky"
-      className="bg-white dark:bg-dark-white mb-10 border-solid border-0 border-b-[1px] border-gainsboro dark:border-dark-gainsboro "
-    >
+    <AppBar position="static" className="bg-white dark:bg-dark-white">
       <Toolbar className="flex justify-between">
         <div className="flex items-center">
           <Typography variant="h6" className="text-black dark:text-dark-black">
@@ -99,19 +79,6 @@ export default function Navbar({ onLoginClick }) {
         </div>
         <div className="flex items-center space-x-4">
           <DarkModeToggle />
-          <Button color="inherit" onClick={handleMenuClick}>
-            Menu
-          </Button>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => handleNavigation("/")}>Home</MenuItem>
-            <MenuItem onClick={() => handleNavigation("/about")}>
-              About
-            </MenuItem>
-          </Menu>
           {user.is_authenticated ? <GithubAvatar user={user} /> : null}
           <GithubBtn
             user={user}
