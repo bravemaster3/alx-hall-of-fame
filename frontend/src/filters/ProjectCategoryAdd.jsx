@@ -3,7 +3,7 @@ import { TextField, Button } from "@mui/material"
 import { FaPlusCircle } from "react-icons/fa"
 
 export default function ProjectCategoryAdd({
-  onFrameContainerClick,
+  // onFrameContainerClick,
   handleOpenModal,
   setActiveTab,
   activeTab,
@@ -22,7 +22,7 @@ export default function ProjectCategoryAdd({
           onClick={() => {
             setActiveTab("All Projects")
             // fetchProjects()
-            onFrameContainerClick()
+            // onFrameContainerClick()
           }}
         >
           All Projects
@@ -35,7 +35,7 @@ export default function ProjectCategoryAdd({
           onClick={() => {
             setActiveTab("My Projects")
             // fetchProjects(githubUsername)
-            onFrameContainerClick()
+            // onFrameContainerClick()
           }}
         >
           My Projects

@@ -144,6 +144,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
         projects = self.get_queryset().filter(Q(user__username=github_username.lower()) | Q(users__username=github_username.lower())).distinct()
         serializer = self.get_serializer(projects, many=True)
         return Response(serializer.data)
+    
+    # Endpoint to handle likes
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def like(self, request, pk=None):
+        try:
+            project = self.get_object()
+            user = request.user
+            if user in project.likes.all():
+                project.likes.remove(user)
+                message = 'You disliked this project'
+            else:
+                project.likes.add(user)
+                message = 'You liked this project'
+            project.save()
+            return Response({'status': message, 'likes_count': project.total_likes()}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)  
 
 
 # class CommentViewSet(viewsets.ModelViewSet):

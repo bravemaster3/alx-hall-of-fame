@@ -29,6 +29,7 @@ const ProjectCard = ({
   const [comments, setComments] = useState([])
   const [editingCommentId, setEditingCommentId] = useState(null)
   const [editContent, setEditContent] = useState("")
+  const [likes, setLikes] = useState(likesCount) // State for likes count
 
   useEffect(() => {
     if (isModalOpen) {
@@ -139,6 +140,27 @@ const ProjectCard = ({
     }
   }
 
+  const handleLike = async () => {
+    const userInfo = JSON.parse(localStorage.getItem("user"))
+    const accessToken = userInfo.token
+    try {
+      const response = await axios.post(
+        `${backendURL}/api/projects/${id}/like/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      setLikes(response.data.likes_count)
+    } catch (error) {
+      console.error("Error liking the project:", error)
+    }
+  }
+
+  // console.log("USER INFO:", JSON.parse(localStorage.getItem("user")))
+
   return (
     <>
       <div className="w-[350px] rounded-3xs box-border flex flex-col items-end justify-start pt-[22px] pb-4 pr-[23px] pl-[21px] gap-[14px] min-w-[332px] max-w-full text-left text-sm text-gray-400 dark:text-dark-gray-400 font-inter border-[1px] border-solid border-gainsboro dark:border-dark-gainsboro">
@@ -176,20 +198,12 @@ const ProjectCard = ({
               </div>
             ))}
           </div>
-          <div className="self-stretch flex flex-row items-center justify-between pt-2">
-            <div className="flex items-center">
-              <FaThumbsUp className="mr-2" /> {likesCount}
-            </div>
-            <div className="flex items-center">
-              <FaComment className="mr-2" /> {commentsCount}
-            </div>
-          </div>
           <div className="self-stretch rounded-md flex flex-row items-start justify-between py-2.5 pr-[9px] pl-0.5 gap-[20px] text-gray-200 dark:text-white mq450:flex-wrap">
             <a
               href={githubRepos}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative leading-[20px] whitespace-pre-wrap inline-block min-w-[113px] flex items-center gap-1"
+              className="relative leading-[20px] whitespace-pre-wrap min-w-[113px] flex items-center gap-1"
             >
               <FaGithub /> View on GitHub
             </a>
@@ -201,6 +215,14 @@ const ProjectCard = ({
             >
               <FaExternalLinkAlt /> Live Project
             </a>
+          </div>
+          <div className="self-stretch flex flex-row items-center justify-between pt-2">
+            <div className="flex items-center">
+              <FaThumbsUp className="mr-2" onClick={handleLike} /> {likes}
+            </div>
+            <div className="flex items-center">
+              <FaComment className="mr-2" /> {comments.length}
+            </div>
           </div>
         </div>
       </div>
@@ -243,7 +265,7 @@ const ProjectCard = ({
             gutterBottom
             className="text-gray-300 dark:text-dark-gray-300"
           >
-            <FaThumbsUp className="mr-2" /> {likesCount}
+            <FaThumbsUp className="mr-2" onClick={handleLike} /> {likes}
           </Typography>
           <Typography
             variant="body2"
@@ -251,7 +273,7 @@ const ProjectCard = ({
             gutterBottom
             className="text-gray-300 dark:text-dark-gray-300"
           >
-            <FaComment className="mr-2" /> {commentsCount}
+            <FaComment className="mr-2" /> {comments.length}
           </Typography>
           <Typography
             variant="h6"
@@ -270,8 +292,8 @@ const ProjectCard = ({
                   {comment.user.username}: {comment.content}
                 </Typography>
                 {localStorage.getItem("user") &&
-                  comment.user.id ===
-                    JSON.parse(localStorage.getItem("user")).id && (
+                  comment.user.username ===
+                    JSON.parse(localStorage.getItem("user")).username && (
                     <div className="flex gap-2 mt-2">
                       <Button
                         variant="outlined"

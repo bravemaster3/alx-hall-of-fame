@@ -8,8 +8,8 @@ import UploadField from "./UploadFile"
 import axios from "axios"
 import { backendURL } from "../../constants"
 
-const ModalAddProject = ({ open, onClose, className = "" }) => {
-  const [formData, setFormData] = useState({
+const ModalAddProject = ({ open, onClose, onProjectAdded, className = "" }) => {
+  const initialFormState = {
     projectTitle: "",
     authors: "",
     description: "",
@@ -17,8 +17,13 @@ const ModalAddProject = ({ open, onClose, className = "" }) => {
     githubRepos: "",
     liveProject: "",
     imgFile: null,
-  })
+  }
 
+  const [formData, setFormData] = useState(initialFormState)
+
+  const handleFormReset = () => {
+    setFormData(initialFormState)
+  }
   const handleInputChange = (e) => {
     const { id, value } = e.target
     setFormData((prevData) => ({
@@ -69,8 +74,10 @@ const ModalAddProject = ({ open, onClose, className = "" }) => {
       )
       console.log("AFTER POST", response)
       console.log("RESPONSE STATUS", response.status)
-      if (response.ok) {
+      if (response.status === 201) {
         console.log("Project added successfully:", response.data)
+        handleFormReset()
+        onProjectAdded(response.data)
         onClose() // Close the modal on successful submission
       } else {
         console.error("Failed to add project:", response.statusText)
@@ -98,6 +105,7 @@ const ModalAddProject = ({ open, onClose, className = "" }) => {
           <form
             className="m-0 w-[586px] shadow-[0px_1px_2px_rgba(0,_0,_0,_0.05),_0px_0px_0px_#000,_0px_0px_0px_#000] rounded-lg bg-white dark:bg-dark-white box-border border-black dark:border-dark-black flex flex-col items-start justify-start pt-[22px] pb-[25px] pr-[57px] pl-[58px] gap-[20px] max-w-full border-[1px] border-solid border-gainsboro-100 mq750:py-5 mq750:pr-7 mq750:pl-[29px] mq750:box-border"
             onSubmit={handleSubmit}
+            // onReset={handleFormReset}
           >
             <h2 className="m-0 flex-1 relative text-5xl tracking-[-0.6px] leading-[24px] font-normal font-inter text-gray-300 dark:text-dark-gray-300 text-left inline-block max-w-full shrink-0 mq450:text-lgi mq450:leading-[19px]">
               Add New Project

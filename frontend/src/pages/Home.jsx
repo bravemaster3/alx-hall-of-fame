@@ -1,16 +1,22 @@
 // src/pages/Home.jsx
-import { useCallback, useState, useEffect } from "react"
+import { useCallback, useState, useEffect, act } from "react"
 import axios from "axios"
 import ProjectCategoryAdd from "../filters/ProjectCategoryAdd"
 import Filters from "../filters/Filters"
 import ModalAddProject from "../newProject/ModalAddProject"
 import ProjectList from "../projectList/ProjectList"
 import { backendURL } from "../../constants"
+import { handleAuth } from "../../utils"
 
-const Home = ({ githubUsername, setGithubUsername }) => {
+const Home = () => {
   const [activeTab, setActiveTab] = useState("All Projects")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [projects, setProjects] = useState([])
+  const [githubUsername, setGithubUsername] = useState(() => {
+    const storedUser = localStorage.getItem("user")
+    // console.log("storedUser", JSON.parse(storedUser).username)
+    return storedUser ? JSON.parse(storedUser).username : ""
+  })
 
   function fetchProjects(username = "") {
     let url = `${backendURL}/api/projects/`
@@ -29,8 +35,23 @@ const Home = ({ githubUsername, setGithubUsername }) => {
   }
 
   useEffect(() => {
-    if (activeTab === "My Projects" && githubUsername) {
+    // console.log("USER::::", githubUsername)
+    if (
+      activeTab === "My Projects" &&
+      JSON.parse(localStorage.getItem("user"))?.is_authenticated
+    ) {
       fetchProjects(githubUsername)
+    } else if (
+      activeTab === "My Projects" &&
+      !JSON.parse(localStorage.getItem("user"))?.is_authenticated
+    ) {
+      const confirmed = window.confirm("Login with Github to proceed")
+      if (!confirmed) {
+        setActiveTab("All Projects")
+        fetchProjects()
+      } else {
+        handleAuth()
+      }
     } else {
       fetchProjects()
     }
@@ -43,7 +64,10 @@ const Home = ({ githubUsername, setGithubUsername }) => {
     if (isAuthenticated) {
       setIsModalOpen(true)
     } else {
-      window.confirm("Login with Github to proceed")
+      const confirmed = window.confirm("Login with Github to proceed")
+      if (confirmed) {
+        handleAuth()
+      }
     }
   }
 
@@ -51,9 +75,12 @@ const Home = ({ githubUsername, setGithubUsername }) => {
     setIsModalOpen(false)
   }
 
-  const onFrameContainerClick = useCallback(() => {
-    // Please sync "All projects" to the project
-  }, [])
+  // const onFrameContainerClick = useCallback(() => {
+  //   // Please sync "All projects" to the project
+  // }, [])
+  const handleProjectAdded = (newProject) => {
+    setProjects((prevProjects) => [...prevProjects, newProject])
+  }
 
   return (
     <main className="self-stretch flex flex-row items-start justify-center pt-0 px-5 pb-[15px] box-border max-w-full shrink-0">
@@ -65,14 +92,18 @@ const Home = ({ githubUsername, setGithubUsername }) => {
             </h3>
           </div>
           <ProjectCategoryAdd
-            onFrameContainerClick={onFrameContainerClick}
+            // onFrameContainerClick={onFrameContainerClick}
             handleOpenModal={handleOpenModal}
             setActiveTab={setActiveTab}
             activeTab={activeTab}
           />
           <Filters activeTab={activeTab} />
         </div>
-        <ModalAddProject open={isModalOpen} onClose={handleCloseModal} />
+        <ModalAddProject
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          onProjectAdded={handleProjectAdded}
+        />
         <ProjectList projects={projects} />
       </section>
     </main>

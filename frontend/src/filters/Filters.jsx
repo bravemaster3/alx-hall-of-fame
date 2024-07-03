@@ -12,11 +12,32 @@ import {
 } from "@mui/material"
 import { FaSearch } from "react-icons/fa"
 import SimpleSelect from "./SimpleSelect"
+import { useState } from "react"
 
-export default function Filters({ activeTab }) {
+export default function Filters({ activeTab, onFilter }) {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCohort, setSelectedCohort] = useState("")
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const handleCohortChange = (event) => {
+    setSelectedCohort(event.target.value)
+  }
+
+  const handleFilterClick = () => {
+    onFilter({ searchTerm, selectedCohort })
+  }
+
   return (
     <div className="self-stretch flex flex-row flex-wrap items-start justify-center gap-[13.1px] max-w-full">
-      {activeTab === "All Projects" ? <SimpleSelect /> : null}
+      {activeTab === "All Projects" ? (
+        <SimpleSelect
+          selectedCohort={selectedCohort}
+          handleCohortChange={handleCohortChange}
+        />
+      ) : null}
       <TextField
         className="[border:none] bg-[transparent] h-10 flex-1 font-inter text-sm text-darkgray min-w-[300px] max-w-full"
         placeholder="Search by project name or tag..."

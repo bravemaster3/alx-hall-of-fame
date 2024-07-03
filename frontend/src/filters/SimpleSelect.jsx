@@ -2,7 +2,7 @@ import { FormControl, InputLabel, Select, MenuItem } from "@mui/material"
 import { useState } from "react"
 import { allCohorts } from "../../constants"
 
-export default function SimpleSelect() {
+export default function SimpleSelect({ selectedCohort, handleCohortChange }) {
   return (
     <FormControl
       className="h-10 w-[270.4px] font-inter text-sm text-black"
@@ -71,6 +71,8 @@ export default function SimpleSelect() {
             style={{ marginRight: "10.800000000000182px" }}
           />
         )}
+        value={selectedCohort}
+        onChange={handleCohortChange}
       >
         <MenuItem disabled className="text-darkgray">
           Filter by cohort

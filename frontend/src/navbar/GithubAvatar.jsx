@@ -8,7 +8,7 @@ export default function GithubAvatar({ user }) {
           src={user.avatar}
           alt="User avatar"
           className="w-10 h-10 rounded-full"
-          title={user.name}
+          title={user.full_name}
         />
       </div>
     </div>
