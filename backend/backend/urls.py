@@ -29,9 +29,9 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="My API",
+        title="ALX Hall of Fame",
         default_version='v1',
-        description="My API description",
+        description="ALX HoF API description",
         # terms_of_service="https://www.example.com/terms/",
         contact=openapi.Contact(email="bravemaster102@gmail.com"),
         license=openapi.License(name="MIT"),
