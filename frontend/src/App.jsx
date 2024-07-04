@@ -7,6 +7,7 @@ import Home from "./pages/Home"
 import About from "./pages/About" // Assuming you have an About page
 import Profile from "./pages/Profile"
 import ProfileEdit from "./pages/ProfileEdit"
+import Login from "./pages/Login"
 
 const App = () => {
   // const [githubUsername, setGithubUsername] = useState(() => {
@@ -58,6 +59,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
         <Footer />
       </div>

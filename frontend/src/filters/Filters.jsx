@@ -1,18 +1,8 @@
-import {
-  TextField,
-  InputAdornment,
-  Icon,
-  IconButton,
-  Button,
-  Select,
-  InputLabel,
-  MenuItem,
-  FormHelperText,
-  FormControl,
-} from "@mui/material"
+// src/filters/Filters.jsx
+import { TextField, Button } from "@mui/material"
 import { FaSearch } from "react-icons/fa"
 import SimpleSelect from "./SimpleSelect"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function Filters({ activeTab, onFilter }) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -26,22 +16,28 @@ export default function Filters({ activeTab, onFilter }) {
     setSelectedCohort(event.target.value)
   }
 
+  // useEffect(() => {
+  //   console.log("SELECTED COHORT:", selectedCohort)
+  // }, [selectedCohort])
+
   const handleFilterClick = () => {
     onFilter({ searchTerm, selectedCohort })
   }
 
   return (
     <div className="self-stretch flex flex-row flex-wrap items-start justify-center gap-[13.1px] max-w-full">
-      {activeTab === "All Projects" ? (
+      {activeTab === "All Projects" && (
         <SimpleSelect
           selectedCohort={selectedCohort}
           handleCohortChange={handleCohortChange}
         />
-      ) : null}
+      )}
       <TextField
         className="[border:none] bg-[transparent] h-10 flex-1 font-inter text-sm text-darkgray min-w-[300px] max-w-full"
         placeholder="Search by project name or tag..."
         variant="outlined"
+        value={searchTerm}
+        onChange={handleSearchChange}
         sx={{
           "& fieldset": { borderColor: "#e4e4e7" },
           "& .MuiInputBase-root": {
@@ -57,6 +53,7 @@ export default function Filters({ activeTab, onFilter }) {
         className="flex items-center justify-center bg-white w-[56.6px] h-[41px] shadow cursor-pointer"
         startIcon={<FaSearch />}
         variant="outlined"
+        onClick={handleFilterClick}
         sx={{
           color: "#09090b", // Text color
           fontSize: "14px", // Adjust font size as needed

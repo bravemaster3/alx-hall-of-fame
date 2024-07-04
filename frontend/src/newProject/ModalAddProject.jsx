@@ -77,6 +77,7 @@ const ModalAddProject = ({ open, onClose, onProjectAdded, className = "" }) => {
       if (response.status === 201) {
         console.log("Project added successfully:", response.data)
         handleFormReset()
+        console.log("NEW PROJECT", response.data)
         onProjectAdded(response.data)
         onClose() // Close the modal on successful submission
       } else {

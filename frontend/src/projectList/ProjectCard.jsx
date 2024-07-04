@@ -10,6 +10,9 @@ import {
 import { Box, Modal, Typography, Button } from "@mui/material"
 import axios from "axios"
 import { backendURL } from "../../constants"
+import ProjectAuthorAvatar from "./ProjectAuthorAvatar"
+import UserProfile from "../pages/UserProfile"
+import { FaStar } from "react-icons/fa6"
 
 const ProjectCard = ({
   id,
@@ -24,12 +27,16 @@ const ProjectCard = ({
   commentsCount,
   onTitleClick,
 }) => {
+  const starsCache = {}
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [comments, setComments] = useState([])
   const [editingCommentId, setEditingCommentId] = useState(null)
   const [editContent, setEditContent] = useState("")
   const [likes, setLikes] = useState(likesCount) // State for likes count
+  const [isUserProfileModalOpen, setIsUserProfileModalOpen] = useState(false)
+  const [selectedUserProfile, setSelectedUserProfile] = useState(null)
+  const [stars, setStars] = useState(0)
 
   useEffect(() => {
     if (isModalOpen) {
@@ -159,7 +166,75 @@ const ProjectCard = ({
     }
   }
 
-  // console.log("USER INFO:", JSON.parse(localStorage.getItem("user")))
+  const handleOpenUserProfileModal = async (username) => {
+    try {
+      const response = await axios.get(`${backendURL}/users/github/${username}`)
+      setSelectedUserProfile(response.data)
+      console.log(response.data)
+      setIsUserProfileModalOpen(true)
+    } catch (error) {
+      console.error("Error fetching user profile:", error)
+    }
+  }
+
+  const handleCloseUserProfileModal = () => {
+    setIsUserProfileModalOpen(false)
+    setSelectedUserProfile(null)
+  }
+
+  // useEffect(() => {
+  //   if (githubRepos) {
+  //     fetchGithubStars()
+  //   }
+  // }, [githubRepos])
+
+  // const fetchGithubStars = async () => {
+  //   try {
+  //     const repoName = githubRepos.split("/").pop()
+  //     const owner = githubRepos.split("/")[3]
+  //     const response = await axios.get(
+  //       `https://api.github.com/repos/${owner}/${repoName}`
+  //     )
+  //     setStars(response.data.stargazers_count)
+  //   } catch (error) {
+  //     console.error("Error fetching GitHub stars:", error)
+  //   }
+  // }
+
+  useEffect(() => {
+    if (githubRepos && !starsCache[githubRepos]) {
+      fetchGithubStars()
+    } else if (githubRepos) {
+      setStars(starsCache[githubRepos])
+    }
+  }, [githubRepos])
+
+  const fetchGithubStars = async () => {
+    try {
+      const repoName = githubRepos.split("/").pop()
+      const owner = githubRepos.split("/")[3]
+
+      // Check cache first
+      if (starsCache[githubRepos]) {
+        setStars(starsCache[githubRepos])
+        return
+      }
+
+      const response = await axios.get(
+        `https://api.github.com/repos/${owner}/${repoName}`
+      )
+      const starCount = response.data.stargazers_count
+
+      // Save result to cache
+      starsCache[githubRepos] = starCount
+      setStars(starCount)
+    } catch (error) {
+      console.error("Error fetching GitHub stars:", error)
+    }
+  }
+
+  // Split the authors string into an array
+  const authorUsernames = authors.split(",").map((username) => username.trim())
 
   return (
     <>
@@ -171,24 +246,34 @@ const ProjectCard = ({
           src={imgFile}
           onClick={handleOpenModal}
         />
-        <div className="self-stretch flex flex-col items-start justify-start gap-[7px]">
-          <div className="self-stretch h-[45px] flex flex-col items-start justify-start pt-[23px] px-0 pb-px box-border gap-[2px] text-5xl">
+        <div className="self-stretch flex flex-col items-start justify-start gap-[1px]">
+          <div className="self-stretch h-[30px] flex flex-col items-start justify-start px-0 pb-px box-border gap-[2px] text-5xl">
             <h2
-              className="mt-[-26px] ml-[-2.2000000000000455px] m-0 self-stretch relative text-inherit dark:text-dark-black tracking-[-0.6px] leading-[24px] font-normal font-inherit shrink-0 cursor-pointer"
+              className="ml-[-2.2000000000000455px] m-0 self-stretch relative text-inherit dark:text-dark-black tracking-[-0.6px] font-normal font-inherit shrink-0 cursor-pointer"
               onClick={handleOpenModal}
             >
               {title}
             </h2>
-            <div className="ml-[-1px] w-[309.1px] relative text-xs tracking-[-0.6px] leading-[21px] inline-block shrink-0">
+            {/* <div className="ml-[-1px] w-[309.1px] relative text-xs tracking-[-0.6px] leading-[21px] inline-block shrink-0">
               By: {authors}
-            </div>
+            </div> */}
           </div>
-          <div className="self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-2 text-dimgray dark:text-dark-dimgray">
+          <div className="ml-[-1px] w-full relative text-xs tracking-[-0.6px] shrink-0 flex flex-wrap items-center gap-2 text-gray-300 dark:text-dark-gray-300 text-center">
+            By:
+            {authorUsernames.map((username) => (
+              <ProjectAuthorAvatar
+                key={username}
+                username={username}
+                onClick={() => handleOpenUserProfileModal(username.trim())}
+              />
+            ))}
+          </div>
+          <div className="self-stretch flex flex-row items-start justify-start pt-2 px-0 pb-1 text-dimgray dark:text-dark-dimgray">
             <div className="ml-[-2px] flex-1 relative leading-[20px] shrink-0">
-              <p className="m-0">{description}</p>
+              <p className="m-0 line-clamp-5">{description}</p>
             </div>
           </div>
-          <div className="self-stretch rounded-md flex flex-row items-start justify-between py-2.5 px-px gap-[20px] text-3xs text-black dark:text-dark-black mq450:flex-wrap">
+          <div className="w-full self-stretch rounded-md flex flex-row items-start justify-left py-0 px-px gap-[20px] gap-y-2 text-3xs text-black dark:text-dark-black flex-wrap">
             <p>Tags:</p>
             {tags.map((tag, index) => (
               <div key={index} className="text-3xs text-white">
@@ -211,24 +296,37 @@ const ProjectCard = ({
               href={liveProject}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-[90px] relative leading-[20px] text-right inline-block shrink-0 flex items-center gap-1"
+              className="w-[90px] relative leading-[20px] text-right shrink-0 flex items-center gap-1"
             >
               <FaExternalLinkAlt /> Live Project
             </a>
           </div>
           <div className="self-stretch flex flex-row items-center justify-between pt-2">
             <div className="flex items-center">
-              <FaThumbsUp className="mr-2" onClick={handleLike} /> {likes}
+              <FaThumbsUp
+                className="mr-2"
+                onClick={handleLike}
+                title="Number of likes"
+              />{" "}
+              {likes}
             </div>
             <div className="flex items-center">
-              <FaComment className="mr-2" /> {comments.length}
+              <FaStar className="mr-2" title="Github stargazers" /> {stars}
+            </div>
+            <div className="flex items-center">
+              <FaComment
+                className="mr-2"
+                onClick={handleOpenModal}
+                title="Number of comments"
+              />{" "}
+              {comments.length}
             </div>
           </div>
         </div>
       </div>
 
       <Modal open={isModalOpen} onClose={handleCloseModal}>
-        <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-dark-white border-2 border-black dark:border-dark-black shadow-24 p-4 max-w-[90%] max-h-[85%] overflow-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-slate-500 scrollbar-track-slate-300">
+        <Box className=" w-[800px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-dark-white border-2 border-black dark:border-dark-black shadow-24 p-4 max-w-[90%] max-h-[85%] overflow-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-slate-500 scrollbar-track-slate-300">
           <Typography
             variant="h6"
             gutterBottom
@@ -251,14 +349,24 @@ const ProjectCard = ({
           >
             Tags: {tags.join(", ")}
           </Typography>
-          <Typography
+          {/* <Typography
             variant="body2"
             color="textSecondary"
             gutterBottom
             className="text-gray-300 dark:text-dark-gray-300"
           >
             By: {authors}
-          </Typography>
+          </Typography> */}
+          <div className="flex flex-wrap gap-2 mt-4 text-gray-300 dark:text-dark-gray-300 text-center">
+            By
+            {authorUsernames.map((username) => (
+              <ProjectAuthorAvatar
+                key={username}
+                username={username}
+                onClick={() => handleOpenUserProfileModal(username.trim())}
+              />
+            ))}
+          </div>
           <Typography
             variant="body2"
             color="textSecondary"
@@ -354,6 +462,28 @@ const ProjectCard = ({
                 {editingCommentId ? "Update" : "Submit"}
               </button>
             </form>
+          )}
+        </Box>
+      </Modal>
+
+      <Modal
+        open={isUserProfileModalOpen}
+        onClose={handleCloseUserProfileModal}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "grey",
+            boxShadow: 24,
+            p: 2,
+          }}
+        >
+          {selectedUserProfile && (
+            <UserProfile userProfile={selectedUserProfile} editable={false} />
           )}
         </Box>
       </Modal>

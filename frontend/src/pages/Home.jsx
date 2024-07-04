@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import { useCallback, useState, useEffect, act } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 import ProjectCategoryAdd from "../filters/ProjectCategoryAdd"
 import Filters from "../filters/Filters"
@@ -12,13 +12,13 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("All Projects")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [projects, setProjects] = useState([])
+  const [filteredProjects, setFilteredProjects] = useState([])
   const [githubUsername, setGithubUsername] = useState(() => {
     const storedUser = localStorage.getItem("user")
-    // console.log("storedUser", JSON.parse(storedUser).username)
     return storedUser ? JSON.parse(storedUser).username : ""
   })
 
-  function fetchProjects(username = "") {
+  const fetchProjects = (username = "") => {
     let url = `${backendURL}/api/projects/`
     if (username) {
       url = `${backendURL}/api/projects/user/${username}`
@@ -28,6 +28,7 @@ const Home = () => {
       .get(url)
       .then((response) => {
         setProjects(response.data)
+        setFilteredProjects(response.data)
       })
       .catch((error) => {
         console.error("There was an error fetching the projects!", error)
@@ -35,7 +36,6 @@ const Home = () => {
   }
 
   useEffect(() => {
-    // console.log("USER::::", githubUsername)
     if (
       activeTab === "My Projects" &&
       JSON.parse(localStorage.getItem("user"))?.is_authenticated
@@ -75,11 +75,33 @@ const Home = () => {
     setIsModalOpen(false)
   }
 
-  // const onFrameContainerClick = useCallback(() => {
-  //   // Please sync "All projects" to the project
-  // }, [])
   const handleProjectAdded = (newProject) => {
-    setProjects((prevProjects) => [...prevProjects, newProject])
+    // setProjects((prevProjects) => [...prevProjects, newProject])
+    setProjects((prevProjects) => {
+      const updatedProjects = [...prevProjects, newProject]
+      setFilteredProjects(updatedProjects)
+      return updatedProjects
+    })
+  }
+
+  const handleFilter = ({ searchTerm, selectedCohort }) => {
+    // console.log("selected cohort:", selectedCohort)
+    const filtered = projects.filter((project) => {
+      const matchesSearchTerm =
+        project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.tags
+          .split(",")
+          .some((tag) =>
+            tag.trim().toLowerCase().includes(searchTerm.toLowerCase())
+          )
+
+      const matchesCohort = selectedCohort
+        ? project.user.cohort === selectedCohort
+        : true
+
+      return matchesSearchTerm && matchesCohort
+    })
+    setFilteredProjects(filtered)
   }
 
   return (
@@ -92,19 +114,19 @@ const Home = () => {
             </h3>
           </div>
           <ProjectCategoryAdd
-            // onFrameContainerClick={onFrameContainerClick}
             handleOpenModal={handleOpenModal}
             setActiveTab={setActiveTab}
             activeTab={activeTab}
+            githubUsername={githubUsername}
           />
-          <Filters activeTab={activeTab} />
+          <Filters activeTab={activeTab} onFilter={handleFilter} />
         </div>
         <ModalAddProject
           open={isModalOpen}
           onClose={handleCloseModal}
           onProjectAdded={handleProjectAdded}
         />
-        <ProjectList projects={projects} />
+        <ProjectList projects={filteredProjects} />
       </section>
     </main>
   )

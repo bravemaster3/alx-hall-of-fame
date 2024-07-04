@@ -4,7 +4,7 @@ import { IoLogoGithub } from "react-icons/io"
 export default function GithubBtn({
   user,
   BtnFunction,
-  setStartAuth,
+  setStartAuth = () => {},
   //   isAuthenticated,
 }) {
   const isAuthenticated = user && user.is_authenticated
@@ -14,7 +14,7 @@ export default function GithubBtn({
   const buttonWidth = isAuthenticated ? "142" : "100"
   return (
     <button
-      className={`cursor-pointer [ border border-black dark:border-steelblue ] pt-[7px] pr-[15px] pb-1 bg-${background} dark:bg-dark-steelblue flex-1 rounded-md flex flex-row gap-3 items-start justify-start`}
+      className={`max-w-[300px] max-h-[45px] cursor-pointer [ border border-black dark:border-steelblue ] pt-[7px] pr-[15px] pb-1 bg-${background} dark:bg-dark-steelblue flex-1 rounded-md flex flex-row gap-3 items-start justify-center`}
       //   onClick={onLoginClick}
       onClick={function () {
         // setStartAuth(true)
