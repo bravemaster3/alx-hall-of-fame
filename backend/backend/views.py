@@ -69,12 +69,6 @@ def get_user(request, user_id):
             # Return the serialized user data as JSON response
             return Response(data)
 
-        # The following makes it possible to delete a user, but it requires no authentication, which is not a good idea. Addint that possibility later but only when logged in as the superuser.
-        # elif request.method == 'DELETE':
-        #     # Delete the user
-        #     user.delete()
-        #     # Return a success message
-        #     return Response({'message': 'User deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
     except User.DoesNotExist:
         return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
@@ -103,53 +97,27 @@ def get_user_by_github_username(request, github_username):
     }
     return Response(data)       
 
-# @api_view(['PUT'])
-# @authentication_classes([SessionAuthentication, TokenAuthentication])
-# @permission_classes([IsAuthenticated])
-# def update_profile(request):
-#     """Update user profile"""
-#     profile = get_object_or_404(Profile, user=request.user)
-#     serializer = ProfileSerializer(profile, data=request.data, partial=True)
-    
-#     if serializer.is_valid():
-#         serializer.save()
-#         return Response(serializer.data)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['PUT'])
-# @csrf_exempt
-# @authentication_classes([SessionAuthentication, TokenAuthentication])
-# @permission_classes([IsAuthenticated])
-# def update_profile(request):
-#     """Update user profile and user details"""
-#     print("REACHED HERE")
-#     user = request.user
-#     profile = get_object_or_404(Profile, user=user)
-    
-#     # Update User fields
-#     user_data = {
-#         'username': request.data.get('username', user.username),
-#         'email': request.data.get('email', user.email),
-#     }
-#     user_serializer = UserSerializer(user, data=user_data, partial=True)
-    
-#     # Update Profile fields
-#     profile_serializer = ProfileSerializer(profile, data=request.data, partial=True)
-    
-#     if user_serializer.is_valid() and profile_serializer.is_valid():
-#         user_serializer.save()
-#         profile_serializer.save()
-#         response_data = {
-#             'user': user_serializer.data,
-#             'profile': profile_serializer.data,
-#         }
-#         return Response(response_data)
-    
-#     errors = {
-#         'user_errors': user_serializer.errors,
-#         'profile_errors': profile_serializer.errors,
-#     }
-#     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_all_users_with_profiles(request):
+    """Get a list of all users with their profiles"""
+    try:
+        users = User.objects.select_related('profile').all()
+        users_data = []
+
+        for user in users:
+            if hasattr(user, 'profile'):
+                user_data = {
+                    'full_name': user.profile.full_name,
+                    'github_username': user.username,
+                    'country': user.profile.location  # Assuming 'location' contains the country
+                }
+                users_data.append(user_data)
+
+        return JsonResponse(users_data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 @api_view(['PUT'])
 @csrf_exempt

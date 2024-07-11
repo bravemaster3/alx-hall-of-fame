@@ -145,7 +145,7 @@ const About = () => {
     <Container
       maxWidth="md"
       style={{
-        marginTop: theme.spacing(4),
+        marginTop: theme.spacing(8),
         // minHeight: "100vh", // Ensure container takes full viewport height
         display: "flex",
         flexDirection: "column",

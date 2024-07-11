@@ -109,7 +109,7 @@ const Home = () => {
       <section className="w-[1300px] flex flex-col items-start justify-start gap-[56px] max-w-full mq750:gap-[28px]">
         <div className="self-stretch flex flex-col items-end justify-start gap-[30.5px] max-w-full mq750:gap-[15px]">
           <div className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[23px]">
-            <h3 className="m-0 relative text-[20px] leading-[24px] font-normal font-inter text-black dark:text-dark-black text-center mq450:text-base mq450:leading-[19px]">
+            <h3 className="m-0 mt-8 relative text-[20px] leading-[24px] font-normal font-inter text-black dark:text-dark-black text-center mq450:text-base mq450:leading-[19px]">
               Get inspired by Projects made by ALX learners and alumni
             </h3>
           </div>

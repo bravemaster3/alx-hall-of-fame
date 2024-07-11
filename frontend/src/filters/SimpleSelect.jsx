@@ -25,19 +25,23 @@ export default function SimpleSelect({ selectedCohort, handleCohortChange }) {
           p: 0,
           minHeight: "40px",
           justifyContent: "center",
-          display: "inline-flex",
+          alignItems: "center",
+          display: "flex",
         },
         "& .MuiInputLabel-root": {
           m: 0,
           p: 0,
           minHeight: "40px",
-          display: "inline-flex",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         },
         "& .MuiMenuItem-root": {
           m: 0,
           p: 0,
           height: "40px",
-          display: "inline-flex",
+          display: "flex",
+          alignItems: "center",
         },
         "& .MuiSelect-select": {
           m: 0,
@@ -54,23 +58,36 @@ export default function SimpleSelect({ selectedCohort, handleCohortChange }) {
           fontFamily: "Inter",
           textAlign: "left",
           p: "0 !important",
-          marginLeft: "10.299999999999956px",
+          // marginLeft: "10.299999999999956px",
         },
       }}
     >
-      <InputLabel color="secondary" />
+      <InputLabel
+        id="cohortSelect"
+        color="secondary"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+        }}
+        // style={{ margin: "auto" }}
+      >
+        {/* Filter by cohort */}
+      </InputLabel>
       <Select
+        labelId="cohortSelect"
         color="secondary"
         disableUnderline
         displayEmpty
-        IconComponent={() => (
-          <img
-            width="16px"
-            height="16px"
-            src="/frame-2.svg"
-            style={{ marginRight: "10.800000000000182px" }}
-          />
-        )}
+        // IconComponent={() => (
+        //   <img
+        //     width="16px"
+        //     height="16px"
+        //     src="/frame-2.svg"
+        //     style={{ marginRight: "10px", display: "flex" }}
+        //   />
+        // )}
         value={selectedCohort}
         onChange={handleCohortChange}
       >

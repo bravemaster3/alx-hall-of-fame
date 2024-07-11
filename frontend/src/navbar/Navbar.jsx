@@ -109,7 +109,7 @@ export default function Navbar({ onLoginClick }) {
     <>
       <AppBar
         position="sticky"
-        className="bg-white dark:bg-dark-white mb-10 border-solid border-0 border-b-[1px] border-gainsboro dark:border-dark-gainsboro "
+        className="bg-white dark:bg-dark-white border-solid border-0 border-b-[1px] border-gainsboro dark:border-dark-gainsboro "
       >
         <Toolbar className="flex justify-between">
           <div className="flex items-center">
@@ -124,6 +124,9 @@ export default function Navbar({ onLoginClick }) {
             <DarkModeToggle />
             <Button color="inherit" onClick={() => navigate("/")}>
               Home
+            </Button>
+            <Button color="inherit" onClick={() => navigate("/map")}>
+              MAP
             </Button>
             <Button color="inherit" onClick={() => navigate("/profile")}>
               Profile

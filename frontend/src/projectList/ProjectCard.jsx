@@ -270,7 +270,7 @@ const ProjectCard = ({
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-2 px-0 pb-1 text-dimgray dark:text-dark-dimgray">
             <div className="ml-[-2px] flex-1 relative leading-[20px] shrink-0">
-              <p className="m-0 line-clamp-5">{description}</p>
+              <p className="m-0 line-clamp-3">{description}</p>
             </div>
           </div>
           <div className="w-full self-stretch rounded-md flex flex-row items-start justify-left py-0 px-px gap-[20px] gap-y-2 text-3xs text-black dark:text-dark-black flex-wrap">

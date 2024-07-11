@@ -62,14 +62,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'rest_framework',
-    # 'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt.token_blacklist',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'social_django',
     'corsheaders',
     'backend',
     'projects',
-    'djangoviz',
+    # 'djangoviz',
     # 'django_extensions',
 ]
 

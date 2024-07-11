@@ -51,6 +51,7 @@ urlpatterns = [
     path('users/<int:user_id>', views.get_user, name='specific_user'),
     path('users/github/<str:github_username>/', views.get_user_by_github_username, name='get_user_by_github_username'),
     path('users/update/', views.update_profile, name='update_profile'),
+    path('api/users_with_profiles/', views.get_all_users_with_profiles, name='get_all_users_with_profiles'),
     path('api/', include('projects.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

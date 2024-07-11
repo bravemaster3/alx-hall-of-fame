@@ -11,6 +11,24 @@ export const backendURL = "http://localhost:8000"
 export const frontendURL = "http://localhost:5173"
 export const githubClientID= "3892f236d44713033395"
 
+// let cachedCountries = null;
+
+// export const fetchAllCountries = async () => {
+//   if (cachedCountries) {
+//     return cachedCountries;
+//   }
+
+//   try {
+//     const response = await axios.get('https://restcountries.com/v3.1/all');
+//     cachedCountries = response.data.map(country => country.name.common);
+//     return cachedCountries;
+//   } catch (error) {
+//     console.error("Error fetching countries:", error);
+//     return [];
+//   }
+// };
+
+
 let cachedCountries = null;
 
 export const fetchAllCountries = async () => {
@@ -20,11 +38,19 @@ export const fetchAllCountries = async () => {
 
   try {
     const response = await axios.get('https://restcountries.com/v3.1/all');
-    cachedCountries = response.data.map(country => country.name.common);
+    cachedCountries = response.data.reduce((acc, country) => {
+      if (country.name.common && country.latlng) {
+        acc[country.name.common] = {
+          name: country.name.common,
+          latlng: country.latlng
+        };
+      }
+      return acc;
+    }, {});
     return cachedCountries;
   } catch (error) {
     console.error("Error fetching countries:", error);
-    return [];
+    return {};
   }
 };
 
