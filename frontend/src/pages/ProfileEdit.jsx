@@ -49,7 +49,7 @@ const ProfileEdit = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       const countriesList = await fetchAllCountries()
-      setCountries(countriesList.map((country) => country.name))
+      setCountries(Object.keys(countriesList))
     }
 
     fetchCountries()

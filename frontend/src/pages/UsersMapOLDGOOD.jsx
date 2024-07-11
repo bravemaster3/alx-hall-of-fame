@@ -1,17 +1,12 @@
 // UsersMap.js
 import React, { useEffect, useState } from "react"
 import L from "leaflet"
-import "leaflet.markercluster/dist/MarkerCluster.css"
-import "leaflet.markercluster/dist/MarkerCluster.Default.css"
-import "leaflet/dist/leaflet.css"
 import axios from "axios"
 import { backendURL, fetchAllCountries } from "../../constants"
+import "leaflet/dist/leaflet.css"
 import Modal from "@mui/material/Modal"
 import Box from "@mui/material/Box"
-import UserProfile from "./UserProfile"
-
-// Import marker cluster library
-import "leaflet.markercluster"
+import UserProfile from "./UserProfile" // Adjust the import path for UserProfile component
 
 // Fetch users with profiles
 export const fetchUsersWithProfiles = async () => {
@@ -66,33 +61,22 @@ const UsersMap = () => {
         attribution: "© OpenStreetMap contributors",
       }).addTo(map)
 
-      // Initialize marker cluster group
-      const markers = L.markerClusterGroup()
-
       filteredUsers.forEach((user) => {
         const countryData = countries[user.country]
         if (countryData) {
           const [lat, lng] = countryData.latlng
-          const marker = L.marker([lat, lng])
-
-          // Add user profile data to marker for reference
-          marker.userProfile = user
+          const marker = L.marker([lat, lng]).addTo(map)
 
           marker.on("click", async () => {
             const userProfile = await fetchUserProfile(user.github_username)
             handleOpenUserProfileModal(userProfile)
           })
 
-          // Add marker to marker cluster group
-          markers.addLayer(marker)
+          // marker.bindPopup(
+          //   `<b>${user.full_name}</b><br>${user.github_username}<br>${user.country}`
+          // )
         }
       })
-
-      // Add marker cluster group to map
-      map.addLayer(markers)
-
-      // Fit map bounds to marker cluster group
-      map.fitBounds(markers.getBounds())
     }
 
     initMap()

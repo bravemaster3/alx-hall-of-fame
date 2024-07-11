@@ -17,6 +17,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.7.2",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.1.0",

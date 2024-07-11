@@ -193,10 +193,10 @@ def github_callback(request):
         if user_response.ok:
             user_data = user_response.json()
             username = user_data.get('login')
-            full_name = user_data.get("name")
+            full_name = user_data.get("name") if user_data.get("name") else ""
             avatar_url = user_data.get("avatar_url")
-            location = user_data.get('location')
-            location = location if location else ""
+            location = user_data.get('location') if user_data.get('location') else ""
+            # location = location if location else ""
 
             bio = user_data.get('bio')
             bio = bio if bio else ""
