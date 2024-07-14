@@ -85,25 +85,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # This method should not be called directly, instead use create_with_token
-        return Response({"error": "Use the create_with_token endpoint"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    # @action(detail=True, methods=['get', 'post'])
-    # def comments(self, request, pk=None):
-    #     project = self.get_object()
-    #     # print('REACHED HERE')
-    #     if request.method == 'GET':
-    #         comments = Comment.objects.filter(project=project)
-    #         serializer = CommentSerializer(comments, many=True)
-    #         return Response(serializer.data)
-    #     elif request.method == 'POST':
-    #         serializer = CommentSerializer(data=request.data)
-    #         print('SERIALIZER VALIDITY: ', serializer.is_valid())
-    #         if serializer.is_valid():
-    #             serializer.save(user=request.user, project=project)
-    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response({"error": "Use the create_with_token endpoint"}, status=status.HTTP_400_BAD_REQUEST)   
 
     
     def get_permissions(self):
@@ -113,7 +95,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         return super(ProjectViewSet, self).get_permissions()
     
-    
+    # @action(detail=False, methods=['delete'], permission_classes=[permissions.IsAuthenticated])
     def destroy(self, request, *args, **kwargs):
         # Only allow DELETE if the user is authenticated
         if not request.user.is_authenticated:
@@ -125,6 +107,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
     
+    # @action(detail=False, methods=['put'], permission_classes=[permissions.IsAuthenticated])
     def update(self, request, *args, **kwargs):
         # Only allow DELETE if the user is authenticated
         if not request.user.is_authenticated:

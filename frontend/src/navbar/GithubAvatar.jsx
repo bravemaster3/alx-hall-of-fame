@@ -2,12 +2,12 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 
 export default function GithubAvatar({ user }) {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   return (
     <div className="App">
       <div
         className="avatar cursor-pointer"
-        onClick={() => navigate("/profile")}
+        // onClick={() => navigate("/profile")}
       >
         <img
           src={user.avatar}

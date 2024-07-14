@@ -7,8 +7,11 @@ import ModalAddProject from "../newProject/ModalAddProject"
 import ProjectList from "../projectList/ProjectList"
 import { backendURL } from "../../constants"
 import { handleAuth } from "../../utils"
+import { Share } from "@mui/icons-material"
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("All Projects")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [projects, setProjects] = useState([])
@@ -84,8 +87,27 @@ const Home = () => {
     })
   }
 
+  // const handleFilter = ({ searchTerm, selectedCohort }) => {
+  //   // console.log("selected cohort:", selectedCohort)
+  //   const filtered = projects.filter((project) => {
+  //     const matchesSearchTerm =
+  //       project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       project.tags
+  //         .split(",")
+  //         .some((tag) =>
+  //           tag.trim().toLowerCase().includes(searchTerm.toLowerCase())
+  //         )
+
+  //     const matchesCohort = selectedCohort
+  //       ? project.user.cohort === selectedCohort
+  //       : true
+
+  //     return matchesSearchTerm && matchesCohort
+  //   })
+  //   setFilteredProjects(filtered)
+  // }
+
   const handleFilter = ({ searchTerm, selectedCohort }) => {
-    // console.log("selected cohort:", selectedCohort)
     const filtered = projects.filter((project) => {
       const matchesSearchTerm =
         project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,9 +117,10 @@ const Home = () => {
             tag.trim().toLowerCase().includes(searchTerm.toLowerCase())
           )
 
-      const matchesCohort = selectedCohort
-        ? project.user.cohort === selectedCohort
-        : true
+      const matchesCohort =
+        selectedCohort === "All"
+          ? true
+          : project.users.some((user) => user.cohort === selectedCohort)
 
       return matchesSearchTerm && matchesCohort
     })
@@ -106,7 +129,7 @@ const Home = () => {
 
   return (
     <main className="self-stretch flex flex-row items-start justify-center pt-0 px-5 pb-[15px] box-border max-w-full shrink-0">
-      <section className="w-[1300px] flex flex-col items-start justify-start gap-[56px] max-w-full mq750:gap-[28px]">
+      <section className="w-[1480px] flex flex-col items-start justify-start gap-[35px] max-w-full mq750:gap-[15px]">
         <div className="self-stretch flex flex-col items-end justify-start gap-[30.5px] max-w-full mq750:gap-[15px]">
           <div className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[23px]">
             <h3 className="m-0 mt-8 relative text-[20px] leading-[24px] font-normal font-inter text-black dark:text-dark-black text-center mq450:text-base mq450:leading-[19px]">
@@ -126,6 +149,14 @@ const Home = () => {
           onClose={handleCloseModal}
           onProjectAdded={handleProjectAdded}
         />
+        {activeTab === "My Projects" ? (
+          <div
+            className="w-full text-lgi flex justify-center cursor-pointer text-black dark:text-dark-black"
+            onClick={() => navigate(`/portfolios/${githubUsername}`)}
+          >
+            <Share /> Share
+          </div>
+        ) : null}
         <ProjectList projects={filteredProjects} />
       </section>
     </main>

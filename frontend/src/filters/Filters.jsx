@@ -33,7 +33,7 @@ export default function Filters({ activeTab, onFilter }) {
         />
       )}
       <TextField
-        className="[border:none] bg-[transparent] h-10 flex-1 font-inter text-sm text-darkgray min-w-[300px] max-w-full"
+        className="[border:none] bg-[transparent] h-10 flex-1 font-inter text-sm text-black min-w-[300px] max-w-full"
         placeholder="Search by project name or tag..."
         variant="outlined"
         value={searchTerm}
@@ -46,7 +46,7 @@ export default function Filters({ activeTab, onFilter }) {
             borderRadius: "6px",
             fontSize: "14px",
           },
-          "& .MuiInputBase-input": { color: "#b2b2b2" },
+          // "& .MuiInputBase-input": { color: "#b2b2b2" },
         }}
       />
       <Button

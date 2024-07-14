@@ -1,7 +1,8 @@
 import React, { useState } from "react"
 import { MdOutlineFileUpload } from "react-icons/md"
+import PropTypes from "prop-types"
 
-function UploadField({ idVal, onChange }) {
+function UploadField({ idVal, onChange, required }) {
   const [fileName, setFileName] = useState("")
   const [error, setError] = useState("")
 
@@ -32,9 +33,15 @@ function UploadField({ idVal, onChange }) {
           id={idVal}
         />
         {fileName ? (
-          <strong>Uploaded image: </strong>
+          <>
+            <strong>Uploaded image: </strong>
+            {required && <span className="text-red-600 text-sm ml-1">*</span>}
+          </>
         ) : (
-          "Upload a Project Image"
+          <>
+            {"Upload a Project Image"}
+            {required && <span className="text-red-600 text-sm ml-1">*</span>}
+          </>
         )}
       </label>
       {fileName && (
@@ -45,6 +52,16 @@ function UploadField({ idVal, onChange }) {
       {error && <span className="text-red-500 dark:text-red-300">{error}</span>}
     </div>
   )
+}
+
+UploadField.propTypes = {
+  idVal: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  required: PropTypes.bool,
+}
+
+UploadField.defaultProps = {
+  required: false,
 }
 
 export default UploadField

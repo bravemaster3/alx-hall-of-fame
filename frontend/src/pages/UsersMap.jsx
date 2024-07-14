@@ -1,4 +1,3 @@
-// UsersMap.js
 import React, { useEffect, useState } from "react"
 import L from "leaflet"
 import "leaflet.markercluster/dist/MarkerCluster.css"
@@ -9,8 +8,6 @@ import { backendURL, fetchAllCountries } from "../../constants"
 import Modal from "@mui/material/Modal"
 import Box from "@mui/material/Box"
 import UserProfile from "./UserProfile"
-
-// Import marker cluster library
 import "leaflet.markercluster"
 
 // Fetch users with profiles
@@ -66,7 +63,6 @@ const UsersMap = () => {
         attribution: "© OpenStreetMap contributors",
       }).addTo(map)
 
-      // Initialize marker cluster group
       const markers = L.markerClusterGroup()
 
       filteredUsers.forEach((user) => {
@@ -75,40 +71,48 @@ const UsersMap = () => {
           const [lat, lng] = countryData.latlng
           const marker = L.marker([lat, lng])
 
-          // Add user profile data to marker for reference
           marker.userProfile = user
+
+          // Add a tooltip to the marker
+          marker.bindTooltip(user.full_name || user.githubUsername, {
+            direction: "top", // Tooltip will appear above the marker
+          })
 
           marker.on("click", async () => {
             const userProfile = await fetchUserProfile(user.github_username)
             handleOpenUserProfileModal(userProfile)
           })
 
-          // Add marker to marker cluster group
           markers.addLayer(marker)
         }
       })
 
-      // Add marker cluster group to map
       map.addLayer(markers)
-
-      // Fit map bounds to marker cluster group
       map.fitBounds(markers.getBounds())
     }
 
-    initMap()
+    const updateMapHeight = () => {
+      const navbarHeight = document.getElementById("navbar").offsetHeight
+      const mapElement = document.getElementById("map")
+      mapElement.style.height = `calc(100vh - ${navbarHeight}px)`
+    }
 
-    // Cleanup function to remove the map on component unmount
+    initMap()
+    updateMapHeight()
+    window.addEventListener("resize", updateMapHeight)
+
     return () => {
       const mapContainer = L.DomUtil.get("map")
       if (mapContainer) {
         mapContainer._leaflet_id = null
       }
+      window.removeEventListener("resize", updateMapHeight)
     }
   }, [])
 
   return (
     <>
-      <div id="map" style={{ height: "100vh", width: "100%" }} />
+      <div id="map" style={{ width: "100%" }} />
       <Modal
         open={isUserProfileModalOpen}
         onClose={handleCloseUserProfileModal}
@@ -123,10 +127,15 @@ const UsersMap = () => {
             bgcolor: "grey",
             boxShadow: 24,
             p: 2,
+            maxWidth: "90%",
           }}
         >
           {selectedUserProfile && (
-            <UserProfile userProfile={selectedUserProfile} editable={false} />
+            <UserProfile
+              userProfile={selectedUserProfile}
+              editable={false}
+              onCloseClick={handleCloseUserProfileModal}
+            />
           )}
         </Box>
       </Modal>

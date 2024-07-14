@@ -96,7 +96,7 @@ export default function ProjectList({ projects }) {
             title={project.projectTitle}
             authors={project.authors}
             description={project.description}
-            tags={project.tags.split(", ")} // Assuming tags are comma-separated
+            tags={project.tags.split(", ")}
             githubRepos={project.githubRepos}
             liveProject={project.liveProject}
             imgFile={project.imgFile}

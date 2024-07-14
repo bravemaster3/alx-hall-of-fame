@@ -132,7 +132,18 @@ def update_profile(request):
     # Combine user and profile data
     data = request.data.copy()
     # print("FULL_NAME IS: ", data.get('full_name', profile.full_name))
-    data['profile'] = {
+    # data['profile'] = {
+    #     'full_name': data.get('full_name', profile.full_name),
+    #     'email': data.get('email', user.email),
+    #     'location': data.get('location', profile.location),
+    #     'cohort': data.get('cohort', profile.cohort),
+    #     'bio': data.get('bio', profile.bio),
+    #     'facebook': data.get('facebook', profile.facebook),
+    #     'twitter': data.get('twitter', profile.twitter),
+    #     'linkedin': data.get('linkedin', profile.linkedin),
+    #     'updated': True,
+    # }
+    data.update({
         'full_name': data.get('full_name', profile.full_name),
         'email': data.get('email', user.email),
         'location': data.get('location', profile.location),
@@ -141,11 +152,15 @@ def update_profile(request):
         'facebook': data.get('facebook', profile.facebook),
         'twitter': data.get('twitter', profile.twitter),
         'linkedin': data.get('linkedin', profile.linkedin),
-        'updated': True,
-    }
+        'updated': True,  # Update this in the profile later
+    })
+
+    # print("DATA: ", data)
+
 
     serializer = UserSerializer(user, data=data, partial=True)
 
+    # print("VALIDITY::", serializer.is_valid())
     if serializer.is_valid():
         serializer.save()
         profile = get_object_or_404(Profile, user=user)
@@ -253,11 +268,13 @@ def github_callback(request):
                 )
 
                 # Only update fields if the profile has not been manually updated
+                # The avatar will be updated each time a login occurs, insuring a change in github is also fetched
+                profile.avatar = avatar_url
+                profile.save()
                 if profile.updated is False:
                     profile.full_name = full_name
                     profile.location = location
                     profile.bio = bio
-                    profile.avatar = avatar_url
                     profile.save()
                     user.email = primary_email
                     user.save()

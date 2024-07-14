@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useNavigate } from "react-router-dom"
 import AppBar from "@mui/material/AppBar"
 import Box from "@mui/material/Box"
 import Toolbar from "@mui/material/Toolbar"
@@ -13,20 +12,13 @@ import Button from "@mui/material/Button"
 import Tooltip from "@mui/material/Tooltip"
 import MenuItem from "@mui/material/MenuItem"
 import AdbIcon from "@mui/icons-material/Adb"
-import GithubBtn from "./GithubBtn"
-import GithubAvatar from "./GithubAvatar"
-import { handleAuth, handleLogout } from "../../utils"
-import axios from "axios"
-import { backendURL } from "../../constants"
-import DarkModeToggle from "./DarkModeToggle"
 
-const pages = ["Home", "Map", "People", "About"]
+const pages = ["home", "map", "people", "about"]
 const settings = ["Profile", "Login/Logout"]
 
-export default function Navbar({ user, setUser }) {
+export default function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
-  const navigate = useNavigate()
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -39,88 +31,15 @@ export default function Navbar({ user, setUser }) {
     setAnchorElNav(null)
   }
 
-  const handleCloseUserMenu = (page) => {
-    if (page === "Login/Logout") {
-      page = "login"
-    }
-    navigate(`/${page.toLowerCase()}`)
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null)
   }
 
-  const handleNavigate = (page) => {
-    if (page === "Home") {
-      page = ""
-    }
-    navigate(`/${page.toLowerCase()}`)
-    handleCloseNavMenu()
-  }
-
-  // Old vars
-
-  // const [showUserProfileModal, setShowUserProfileModal] = useState(false)
-
-  const [anchorEl, setAnchorEl] = React.useState(null)
-
-  const [startAuth, setStartAuth] = React.useState(false)
-  const [code, setCode] = React.useState(null)
-  const usedCodes = React.useRef(new Set())
-
-  const handleLogin = React.useCallback(async (authCode) => {
-    if (usedCodes.current.has(authCode)) {
-      // console.log(`Auth code ${authCode} has already been used.`)
-      return
-    }
-
-    try {
-      const response = await axios.get(
-        `${backendURL}/callback?code=${authCode}`
-      )
-      const userData = response.data
-      localStorage.setItem("user", JSON.stringify(userData))
-      setUser(userData)
-      // console.log("USER INFO", userData)
-      usedCodes.current.add(authCode)
-
-      setTimeout(() => {
-        // window.location.href = `${frontendURL}`
-        if (userData.updated) {
-          navigate("/profile")
-        } else {
-          const confirmed = window.confirm("Please complete your profile now!")
-          if (confirmed) navigate("/profile/edit")
-        }
-      }, 10)
-    } catch (error) {
-      console.error("Error logging in:", error)
-    }
-  }, [])
-
-  React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const authCode = urlParams.get("code")
-    if (authCode && !usedCodes.current.has(authCode)) {
-      setCode(authCode)
-      // console.log(authCode)
-      handleLogin(authCode)
-    }
-  }, [startAuth])
-
   return (
-    <AppBar
-      position="static"
-      id="navbar"
-      sx={{ height: { xs: 54, md: 64 }, display: "flex", alignItems: "center" }}
-    >
+    <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar
-          disableGutters
-          sx={{
-            height: { xs: 54, md: 64 },
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
+        <Toolbar disableGutters>
+          {/* <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
           <Typography
             variant="h6"
             noWrap
@@ -141,10 +60,18 @@ export default function Navbar({ user, setUser }) {
                 src="/src/assets/logo.png"
                 alt="ALX Hall of Fame Logo"
                 title="ALX Hall of Fame"
-                className="w-[55px] h-[63px] mt-2"
+                className="w-[45px] h-[50px]"
               />
             </a>
           </Typography>
+          {/* <a href="/">
+            <img
+              src="/src/assets/logo.png"
+              alt="ALX Hall of Fame Logo"
+              title="ALX Hall of Fame"
+              className="w-[45px] h-[50px]"
+            />
+          </a> */}
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -176,12 +103,13 @@ export default function Navbar({ user, setUser }) {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={() => handleNavigate(page)}>
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
+          {/* <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} /> */}
           <Typography
             variant="h5"
             noWrap
@@ -190,7 +118,6 @@ export default function Navbar({ user, setUser }) {
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
-              marginLeft: "60px",
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
@@ -204,7 +131,7 @@ export default function Navbar({ user, setUser }) {
                 src="/src/assets/logo.png"
                 alt="ALX Hall of Fame Logo"
                 title="ALX Hall of Fame"
-                className="w-[48px] h-[53px] mt-1"
+                className="w-[45px] h-[50px]"
               />
             </a>
           </Typography>
@@ -212,7 +139,7 @@ export default function Navbar({ user, setUser }) {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={() => handleNavigate(page)}
+                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page}
@@ -220,48 +147,12 @@ export default function Navbar({ user, setUser }) {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0, display: "flex", gap: 2 }}>
-            <DarkModeToggle />
-            <Typography sx={{ display: { xs: "none", md: "flex" } }}>
-              <GithubBtn
-                user={user}
-                BtnFunction={
-                  user.is_authenticated
-                    ? () => {
-                        handleLogout({ setUser })
-                        navigate("/")
-                      }
-                    : handleAuth
-                }
-                setStartAuth={setStartAuth}
-              />
-            </Typography>
-
-            <Tooltip title="Profile" sx={{ display: "flex" }}>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" /> */}
-                {/* <GithubAvatar user={user} /> */}
-                {user.is_authenticated ? (
-                  <GithubAvatar user={user} />
-                ) : (
-                  <Avatar alt="Login" />
-                )}
+                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
-
-            {/* <Typography sx={{ display: { xs: "none", md: "flex" } }}>
-              {" "}
-              {user.is_authenticated ? <GithubAvatar user={user} /> : null}
-            </Typography> */}
-
-            {/* {
-              user.is_authenticated ? <GithubAvatar user={user} /> : null
-              // <Tooltip title="Open settings">
-              //   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              //     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              //   </IconButton>
-              // </Tooltip>
-            } */}
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
@@ -276,13 +167,10 @@ export default function Navbar({ user, setUser }) {
                 horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
-              onClose={() => handleCloseUserMenu("Profile")}
+              onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem
-                  key={setting}
-                  onClick={() => handleCloseUserMenu(setting)}
-                >
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

@@ -2,9 +2,9 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import GithubBtn from "../navbar/GithubBtn" // Adjust the import path as necessary
-import { handleAuth } from "../../utils"
+import { handleAuth, handleLogout } from "../../utils"
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const [profile, setProfile] = useState(() => {
     const storedUser = localStorage.getItem("user")
     return storedUser ? JSON.parse(storedUser) : null
@@ -18,7 +18,15 @@ const Login = () => {
       <h2>Github Authentication</h2>
       <GithubBtn
         user={profile}
-        BtnFunction={handleAuth}
+        BtnFunction={
+          profile.is_authenticated
+            ? () => {
+                handleLogout({ setUser })
+                setProfile(null)
+                navigate("/")
+              }
+            : handleAuth
+        }
         setStartAuth={() => {}}
       />
     </div>

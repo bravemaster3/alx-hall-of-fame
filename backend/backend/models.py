@@ -8,7 +8,7 @@ class Profile(models.Model):
     location = models.CharField(max_length=100, blank=True)
     cohort = models.CharField(max_length=100, default="", blank=True)
     updated = models.BooleanField(default=False)  # New field to track manual updates
-    bio = models.TextField(max_length=1000, blank=True)  # New bio field
+    bio = models.TextField(max_length=1000, null=True, blank=True)  # New bio field
     facebook = models.URLField(max_length=200, null=True, blank=True)
     twitter = models.URLField(max_length=200, null=True, blank=True)
     linkedin = models.URLField(max_length=200, null=True, blank=True)

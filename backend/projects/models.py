@@ -11,7 +11,7 @@ class Project(models.Model):
     description = models.TextField()
     tags = models.CharField(max_length=255)
     githubRepos = models.URLField()
-    liveProject = models.URLField()
+    liveProject = models.URLField(blank=True)
     imgFile = models.ImageField(upload_to='project_images/')
     likes = models.ManyToManyField(User, related_name='liked_projects', blank=True)
 

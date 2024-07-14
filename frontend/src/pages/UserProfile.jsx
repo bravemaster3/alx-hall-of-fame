@@ -7,7 +7,15 @@ import {
   Divider,
   IconButton,
 } from "@mui/material"
-import { GitHub, Facebook, Twitter, LinkedIn, Edit } from "@mui/icons-material"
+import {
+  GitHub,
+  Facebook,
+  Twitter,
+  LinkedIn,
+  Edit,
+  Delete,
+  Close,
+} from "@mui/icons-material"
 import styled from "@emotion/styled"
 
 const StyledCard = styled(Card)`
@@ -27,19 +35,29 @@ const EditButton = styled(IconButton)`
 const UserProfile = ({
   userProfile,
   onEditClick = () => {},
+  onCloseClick = () => {},
   editable = true,
+  closable = true,
 }) => {
   if (!userProfile) {
     return <Typography variant="h6">No user profile available</Typography>
   }
 
   return (
-    <StyledCard>
-      {editable && onEditClick && (
-        <EditButton onClick={onEditClick}>
-          <Edit />
-        </EditButton>
-      )}
+    <StyledCard className="bg-white dark:bg-dark-white">
+      <div className="flex justify-between items-end">
+        {editable && onEditClick && (
+          <EditButton onClick={onEditClick}>
+            <Edit className="text-gray-700 dark:text-gray-50" />
+          </EditButton>
+        )}
+        {closable && (
+          <Close
+            onClick={onCloseClick}
+            className="text-gray-700 dark:text-gray-50"
+          />
+        )}
+      </div>
       <CardContent className="bg-white dark:bg-dark-white text-gray-300 dark:text-dark-gray-300">
         <div
           style={{
@@ -54,7 +72,9 @@ const UserProfile = ({
             style={{ width: 100, height: 100, marginRight: 20 }}
           />
           <div>
-            <Typography variant="h4">{userProfile.full_name}</Typography>
+            <Typography variant="h4">
+              {userProfile.full_name || userProfile.username}
+            </Typography>
             <Typography variant="body1">
               {userProfile.bio || "No bio available"}
             </Typography>

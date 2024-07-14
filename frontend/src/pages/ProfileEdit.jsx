@@ -35,9 +35,9 @@ const ProfileEdit = () => {
     location: userProfile?.location || "",
     cohort: userProfile?.cohort || "",
     bio: userProfile?.bio || "",
-    facebook: userProfile?.facebook || null,
-    twitter: userProfile?.twitter || null,
-    linkedin: userProfile?.linkedin || null,
+    facebook: userProfile?.facebook || "",
+    twitter: userProfile?.twitter || "",
+    linkedin: userProfile?.linkedin || "",
   })
 
   const navigate = useNavigate()

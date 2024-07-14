@@ -213,6 +213,9 @@ export default {
       mq450: {
         raw: "screen and (max-width: 450px)",
       },
+      mql750: {
+        raw: "screen and (min-width: 750px)",
+      },
     },
   },
   corePlugins: {

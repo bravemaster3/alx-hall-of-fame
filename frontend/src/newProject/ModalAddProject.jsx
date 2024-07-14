@@ -57,10 +57,10 @@ const ModalAddProject = ({ open, onClose, onProjectAdded, className = "" }) => {
     }
 
     // Debugging: Log the contents of formDataToSend
-    for (const pair of formDataToSend.entries()) {
-      console.log(pair[0] + ": " + pair[1])
-    }
-    console.log("JWT TOKEN", accessToken)
+    // for (const pair of formDataToSend.entries()) {
+    //   console.log(pair[0] + ": " + pair[1])
+    // }
+    // console.log("JWT TOKEN", accessToken)
     try {
       const response = await axios.post(
         `${backendURL}/api/projects/create_with_token/`,
@@ -72,12 +72,12 @@ const ModalAddProject = ({ open, onClose, onProjectAdded, className = "" }) => {
           },
         }
       )
-      console.log("AFTER POST", response)
-      console.log("RESPONSE STATUS", response.status)
+      // console.log("AFTER POST", response)
+      // console.log("RESPONSE STATUS", response.status)
       if (response.status === 201) {
         console.log("Project added successfully:", response.data)
         handleFormReset()
-        console.log("NEW PROJECT", response.data)
+        // console.log("NEW PROJECT", response.data)
         onProjectAdded(response.data)
         onClose() // Close the modal on successful submission
       } else {
@@ -117,13 +117,15 @@ const ModalAddProject = ({ open, onClose, onProjectAdded, className = "" }) => {
               placeholderVal="Enter project title"
               value={formData.projectTitle}
               onChange={handleInputChange}
+              required
             />
             <FormInput
               labelVal="Authors"
               idVal="authors"
-              placeholderVal="Author names"
+              placeholderVal="Authors github usernames, comma separated"
               value={formData.authors}
               onChange={handleInputChange}
+              required
             />
             <FormTextField
               labelVal="Short description"
@@ -131,29 +133,36 @@ const ModalAddProject = ({ open, onClose, onProjectAdded, className = "" }) => {
               placeholderVal="Add project description"
               value={formData.description}
               onChange={handleInputChange}
+              required
             />
             <FormInput
               labelVal="Tags"
               idVal="tags"
-              placeholderVal="Add tags"
+              placeholderVal="Add tags (stack, keywords, ...), comma separated"
               value={formData.tags}
               onChange={handleInputChange}
+              required
             />
             <FormInput
               labelVal="GitHub Repository"
               idVal="githubRepos"
-              placeholderVal="GitHub repo link"
+              placeholderVal="Enter a valid GitHub repo link"
               value={formData.githubRepos}
               onChange={handleInputChange}
+              required
             />
             <FormInput
               labelVal="Live Project Link"
               idVal="liveProject"
-              placeholderVal="Live project URL"
+              placeholderVal="Enter a valid Live demo URL"
               value={formData.liveProject}
               onChange={handleInputChange}
             />
-            <UploadField idVal={"imgFile"} onChange={handleFileChange} />
+            <UploadField
+              idVal={"imgFile"}
+              onChange={handleFileChange}
+              required
+            />
 
             <Button
               className="self-stretch h-10 mq450:pl-5 mq450:pr-5 mq450:box-border"

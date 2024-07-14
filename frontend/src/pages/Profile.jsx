@@ -53,13 +53,18 @@ const Profile = () => {
         left: "50%",
         transform: "translate(-50%, -50%)",
         width: 600,
+        maxWidth: "90%",
         bgcolor: "grey",
         boxShadow: 24,
         p: 2,
       }}
     >
       {/* <Container className="mt-[20px] bg-white dark:bg-dark-white"> */}
-      <UserProfile userProfile={profile} onEditClick={handleEditClick} />
+      <UserProfile
+        userProfile={profile}
+        onEditClick={handleEditClick}
+        closable={false}
+      />
       {/* </Container> */}
     </Box>
   )

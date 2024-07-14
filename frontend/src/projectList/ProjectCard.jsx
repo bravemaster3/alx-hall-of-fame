@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react"
 import {
   FaGithub,
   FaExternalLinkAlt,
-  FaThumbsUp,
-  FaComment,
+  // FaComment,
   FaEdit,
   FaTrash,
+  FaComment,
 } from "react-icons/fa"
 import { Box, Modal, Typography, Button } from "@mui/material"
 import axios from "axios"
@@ -13,6 +13,7 @@ import { backendURL } from "../../constants"
 import ProjectAuthorAvatar from "./ProjectAuthorAvatar"
 import UserProfile from "../pages/UserProfile"
 import { FaStar } from "react-icons/fa6"
+import { Comment, Delete, Edit, Favorite, Star } from "@mui/icons-material"
 
 const ProjectCard = ({
   id,
@@ -170,7 +171,7 @@ const ProjectCard = ({
     try {
       const response = await axios.get(`${backendURL}/users/github/${username}`)
       setSelectedUserProfile(response.data)
-      console.log(response.data)
+      // console.log(response.data)
       setIsUserProfileModalOpen(true)
     } catch (error) {
       console.error("Error fetching user profile:", error)
@@ -292,34 +293,51 @@ const ProjectCard = ({
             >
               <FaGithub /> View on GitHub
             </a>
-            <a
-              href={liveProject}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-[90px] relative leading-[20px] text-right shrink-0 flex items-center gap-1"
-            >
-              <FaExternalLinkAlt /> Live Project
-            </a>
+            {liveProject && (
+              <a
+                href={liveProject}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[90px] relative leading-[20px] text-right shrink-0 flex items-center gap-1"
+              >
+                <FaExternalLinkAlt /> Live Project
+              </a>
+            )}
           </div>
           <div className="self-stretch flex flex-row items-center justify-between pt-2">
             <div className="flex items-center">
-              <FaThumbsUp
+              {/* <FaThumbsUp
                 className="mr-2"
                 onClick={handleLike}
                 title="Number of likes"
+              />{" "} */}
+              <Favorite
+                className=" mr-2 text-red-500 cursor-pointer"
+                onClick={handleLike}
+                titleAccess="Number of likes"
               />{" "}
               {likes}
             </div>
             <div className="flex items-center">
-              <FaStar className="mr-2" title="Github stargazers" /> {stars}
+              <Star
+                className="mr-2 text-[#d4af37]"
+                titleAccess="Github stargazers"
+              />{" "}
+              {stars}
             </div>
             <div className="flex items-center">
-              <FaComment
+              <Comment
+                className="text-gray-600 mr-2 cursor-pointer"
+                onClick={handleOpenModal}
+                titleAccess="Number of comments"
+              />{" "}
+              {comments.length}
+              {/* <FaComment
                 className="mr-2"
                 onClick={handleOpenModal}
                 title="Number of comments"
               />{" "}
-              {comments.length}
+              {comments.length} */}
             </div>
           </div>
         </div>
@@ -332,9 +350,15 @@ const ProjectCard = ({
             gutterBottom
             className="text-black dark:text-dark-black"
           >
-            Project Title: {title}
+            Project title: {title}
           </Typography>
-          <img src={imgFile} alt={title} className="w-full rounded" />
+          <img
+            src={imgFile}
+            alt={title}
+            className="self-stretch h-[300px] relative rounded-3xs w-full overflow-hidden shrink-0 object-cover cursor-pointer"
+
+            // className="w-full rounded"
+          />
           <Typography
             variant="body1"
             gutterBottom
@@ -373,7 +397,13 @@ const ProjectCard = ({
             gutterBottom
             className="text-gray-300 dark:text-dark-gray-300"
           >
-            <FaThumbsUp className="mr-2" onClick={handleLike} /> {likes}
+            {/* <FaThumbsUp className="mr-2" onClick={handleLike} /> {likes} */}
+            <Favorite
+              className=" mr-2 text-red-500 cursor-pointer"
+              onClick={handleLike}
+              titleAccess="Number of likes"
+            />{" "}
+            {likes}
           </Typography>
           <Typography
             variant="body2"
@@ -381,7 +411,12 @@ const ProjectCard = ({
             gutterBottom
             className="text-gray-300 dark:text-dark-gray-300"
           >
-            <FaComment className="mr-2" /> {comments.length}
+            {/* <FaComment className="mr-2" /> */}
+            <Comment
+              className="text-gray-600 mr-2"
+              titleAccess="Number of comments"
+            />{" "}
+            {comments.length}
           </Typography>
           <Typography
             variant="h6"
@@ -402,8 +437,20 @@ const ProjectCard = ({
                 {localStorage.getItem("user") &&
                   comment.user.username ===
                     JSON.parse(localStorage.getItem("user")).username && (
-                    <div className="flex gap-2 mt-2">
-                      <Button
+                    <div className="flex gap-2 w-full justify-end">
+                      <Edit
+                        titleAccess="Edit comment"
+                        className="mr-2 text-gray-500"
+                        onClick={() =>
+                          handleEditComment(comment.id, comment.content)
+                        }
+                      />
+                      <Delete
+                        titleAccess="Delete comment"
+                        className="mr-2 text-red-500"
+                        onClick={() => handleDeleteComment(comment.id)}
+                      />
+                      {/* <Button
                         variant="outlined"
                         color="primary"
                         onClick={() =>
@@ -411,14 +458,14 @@ const ProjectCard = ({
                         }
                       >
                         <FaEdit /> Edit
-                      </Button>
-                      <Button
+                      </Button> */}
+                      {/* <Button
                         variant="outlined"
                         color="secondary"
                         onClick={() => handleDeleteComment(comment.id)}
                       >
                         <FaTrash /> Delete
-                      </Button>
+                      </Button> */}
                     </div>
                   )}
               </div>
@@ -483,7 +530,11 @@ const ProjectCard = ({
           }}
         >
           {selectedUserProfile && (
-            <UserProfile userProfile={selectedUserProfile} editable={false} />
+            <UserProfile
+              userProfile={selectedUserProfile}
+              editable={false}
+              onCloseClick={handleCloseUserProfileModal}
+            />
           )}
         </Box>
       </Modal>
