@@ -69,10 +69,21 @@ const UserProfile = ({
           <Avatar
             src={userProfile.avatar}
             alt={userProfile.full_name}
-            style={{ width: 100, height: 100, marginRight: 20 }}
+            style={{
+              width: 80,
+              height: 80,
+              maxWidth: "15vw",
+              maxHeight: "15vw",
+              marginRight: 20,
+            }}
           />
+          {/* <Avatar
+            src={userProfile.avatar}
+            alt={userProfile.full_name}
+            className="w-100 h-100 mr-5"
+          /> */}
           <div>
-            <Typography variant="h4">
+            <Typography variant="h5">
               {userProfile.full_name || userProfile.username}
             </Typography>
             <Typography variant="body1">
@@ -97,7 +108,7 @@ const UserProfile = ({
           </Typography>
         </div>
         <Divider sx={{ backgroundColor: "grey" }} />
-        <div className="mt-5 flex justify-center gap-10">
+        <div className="mt-5 flex justify-center gap-5">
           {/* <div style={{ display: "flex", justifyContent: "center", gap: 10 }}> */}
           <a
             href={`https://github.com/${userProfile.username}`}

@@ -108,16 +108,48 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
     
     # @action(detail=False, methods=['put'], permission_classes=[permissions.IsAuthenticated])
+    # def update(self, request, *args, **kwargs):
+    #     # Only allow DELETE if the user is authenticated
+    #     if not request.user.is_authenticated:
+    #         return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+    #     # Check if the user is the owner of the project
+    #     project = self.get_object()
+    #     if request.user != project.user:
+    #         return Response({"detail": "You do not have permission to edit this project."}, status=status.HTTP_403_FORBIDDEN)
+
+    #     return super(ProjectViewSet, self).update(request, *args, **kwargs)
+
     def update(self, request, *args, **kwargs):
-        # Only allow DELETE if the user is authenticated
         if not request.user.is_authenticated:
             return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
-        # Check if the user is the owner of the project
+
         project = self.get_object()
         if request.user != project.user:
             return Response({"detail": "You do not have permission to edit this project."}, status=status.HTTP_403_FORBIDDEN)
 
-        return super(ProjectViewSet, self).update(request, *args, **kwargs)
+        request.data._mutable = True
+        request.data['authors'] = request.data['authors'].lower()
+
+        authors = request.data.get('authors', '')
+        author_usernames = [username.strip().lower() for username in authors.split(',')]
+        author_users = []
+
+        for username in author_usernames:
+            if username:
+                author_user, created = User.objects.get_or_create(username=username)
+                author_users.append(author_user)
+
+        if not request.user in author_users:
+            request.data['authors'] = f"{request.user.username}, {request.data['authors']}"
+            author_users.insert(0, request.user)
+
+        response = super(ProjectViewSet, self).update(request, *args, **kwargs)
+        if response.status_code == 200:
+            project.users.set(author_users)
+            response.data['authors'] = ', '.join(user.username for user in project.users.all()) # [user.username for user in project.users.all()]
+
+        return response
+    
 
     @action(detail=False, url_path='user/(?P<github_username>.+)')
     def user_projects(self, request, github_username=None):

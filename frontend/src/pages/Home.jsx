@@ -20,6 +20,7 @@ const Home = () => {
     const storedUser = localStorage.getItem("user")
     return storedUser ? JSON.parse(storedUser).username : ""
   })
+  const [editProject, setEditProject] = useState(null)
 
   const fetchProjects = (username = "") => {
     let url = `${backendURL}/api/projects/`
@@ -76,6 +77,7 @@ const Home = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
+    setEditProject(null)
   }
 
   const handleProjectAdded = (newProject) => {
@@ -87,6 +89,43 @@ const Home = () => {
     })
   }
 
+  const handleProjectEdited = (updatedProject) => {
+    setProjects((prevProjects) => {
+      const updatedProjects = prevProjects.map((project) =>
+        project.id === updatedProject.id ? updatedProject : project
+      )
+      setFilteredProjects(updatedProjects)
+      return updatedProjects
+    })
+  }
+
+  const handleEdit = (project) => {
+    setEditProject(project)
+    setIsModalOpen(true)
+  }
+
+  const handleDelete = (projectId) => {
+    const userInfo = JSON.parse(localStorage.getItem("user"))
+    const accessToken = userInfo.token
+
+    axios
+      .delete(`${backendURL}/api/projects/${projectId}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => {
+        setProjects((prevProjects) =>
+          prevProjects.filter((project) => project.id !== projectId)
+        )
+        setFilteredProjects((prevFilteredProjects) =>
+          prevFilteredProjects.filter((project) => project.id !== projectId)
+        )
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the project!", error)
+      })
+  }
   // const handleFilter = ({ searchTerm, selectedCohort }) => {
   //   // console.log("selected cohort:", selectedCohort)
   //   const filtered = projects.filter((project) => {
@@ -127,6 +166,41 @@ const Home = () => {
     setFilteredProjects(filtered)
   }
 
+  // return (
+  //   <main className="self-stretch flex flex-row items-start justify-center pt-0 px-5 pb-[15px] box-border max-w-full shrink-0">
+  //     <section className="w-[1480px] flex flex-col items-start justify-start gap-[35px] max-w-full mq750:gap-[15px]">
+  //       <div className="self-stretch flex flex-col items-end justify-start gap-[30.5px] max-w-full mq750:gap-[15px]">
+  //         <div className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[23px]">
+  //           <h3 className="m-0 mt-8 relative text-[20px] leading-[24px] font-normal font-inter text-black dark:text-dark-black text-center mq450:text-base mq450:leading-[19px]">
+  //             Get inspired by Projects made by ALX learners and alumni
+  //           </h3>
+  //         </div>
+  //         <ProjectCategoryAdd
+  //           handleOpenModal={handleOpenModal}
+  //           setActiveTab={setActiveTab}
+  //           activeTab={activeTab}
+  //           githubUsername={githubUsername}
+  //         />
+  //         <Filters activeTab={activeTab} onFilter={handleFilter} />
+  //       </div>
+  //       <ModalAddProject
+  //         open={isModalOpen}
+  //         onClose={handleCloseModal}
+  //         onProjectAdded={handleProjectAdded}
+  //       />
+  //       {activeTab === "My Projects" ? (
+  //         <div
+  //           className="w-full text-lgi flex justify-center cursor-pointer text-black dark:text-dark-black"
+  //           onClick={() => navigate(`/portfolios/${githubUsername}`)}
+  //         >
+  //           <Share /> Share
+  //         </div>
+  //       ) : null}
+  //       <ProjectList projects={filteredProjects} />
+  //     </section>
+  //   </main>
+  // )
+
   return (
     <main className="self-stretch flex flex-row items-start justify-center pt-0 px-5 pb-[15px] box-border max-w-full shrink-0">
       <section className="w-[1480px] flex flex-col items-start justify-start gap-[35px] max-w-full mq750:gap-[15px]">
@@ -148,6 +222,8 @@ const Home = () => {
           open={isModalOpen}
           onClose={handleCloseModal}
           onProjectAdded={handleProjectAdded}
+          onProjectEdited={handleProjectEdited}
+          editProject={editProject}
         />
         {activeTab === "My Projects" ? (
           <div
@@ -157,7 +233,13 @@ const Home = () => {
             <Share /> Share
           </div>
         ) : null}
-        <ProjectList projects={filteredProjects} />
+        <ProjectList
+          projects={filteredProjects}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          githubUsername={githubUsername}
+          activeTab={activeTab}
+        />
       </section>
     </main>
   )

@@ -27,6 +27,11 @@ const ProjectCard = ({
   likesCount,
   commentsCount,
   onTitleClick,
+  onEdit,
+  onDelete,
+  githubUsername,
+  project,
+  activeTab,
 }) => {
   const starsCache = {}
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -235,11 +240,16 @@ const ProjectCard = ({
   }
 
   // Split the authors string into an array
+  // console.log("AUTHORS", authors)
   const authorUsernames = authors.split(",").map((username) => username.trim())
 
+  // console.log("ACTIVE TAB: ", activeTab)
+  // console.log(githubUsername)
+  // console.log(project.user.username)
   return (
     <>
       <div className="w-[350px] rounded-3xs box-border flex flex-col items-end justify-start pt-[22px] pb-4 pr-[23px] pl-[21px] gap-[14px] min-w-[332px] max-w-full text-left text-sm text-gray-400 dark:text-dark-gray-400 font-inter border-[1px] border-solid border-gainsboro dark:border-dark-gainsboro">
+        {/* <div> */}
         <img
           className="self-stretch h-40 relative rounded-3xs max-w-full overflow-hidden shrink-0 object-cover cursor-pointer"
           loading="lazy"
@@ -341,6 +351,25 @@ const ProjectCard = ({
             </div>
           </div>
         </div>
+        {/* </div> */}
+        {project.user.username.toLowerCase() === githubUsername.toLowerCase() &&
+          activeTab === "My Projects" && (
+            <div className="flex w-full justify-between mt-auto">
+              <Button onClick={() => onEdit(project)}>Edit</Button>
+              <Button
+                onClick={() => {
+                  const confirmed = window.confirm(
+                    "This project will be deleted forever. Proceed?"
+                  )
+                  if (confirmed) {
+                    onDelete(project.id)
+                  }
+                }}
+              >
+                <span className="text-red-600">Delete</span>
+              </Button>
+            </div>
+          )}
       </div>
 
       <Modal open={isModalOpen} onClose={handleCloseModal}>

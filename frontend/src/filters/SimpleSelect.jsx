@@ -4,7 +4,7 @@ import { allCohorts } from "../../constants"
 export default function SimpleSelect({ selectedCohort, handleCohortChange }) {
   return (
     <select
-      className="px-4 py-2 h-[40px] border rounded-lg w-[270.4px] font-inter text-sm text-black"
+      className="px-4 py-2 h-[40px] border rounded-lg w-[270.4px] max-w-[40%] font-inter text-sm text-black"
       value={selectedCohort}
       onChange={handleCohortChange}
     >

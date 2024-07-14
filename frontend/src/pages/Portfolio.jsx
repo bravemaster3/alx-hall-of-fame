@@ -73,12 +73,12 @@ const Portfolio = () => {
         {/* </div> */}
         <Avatar
           src={userProfile.avatar}
-          alt={userProfile.full_name}
+          alt={userProfile.full_name || userProfile.username}
           style={{ width: 80, height: 80, marginRight: 20 }}
         />
         <div>
           <h2 className="text-black dark:text-dark-black">
-            {userProfile.full_name}'s portfolio
+            {userProfile.full_name || userProfile.username}'s portfolio
           </h2>
           <p className="text-black dark:text-dark-black">
             {userProfile.bio || ""}
