@@ -131,18 +131,6 @@ def update_profile(request):
 
     # Combine user and profile data
     data = request.data.copy()
-    # print("FULL_NAME IS: ", data.get('full_name', profile.full_name))
-    # data['profile'] = {
-    #     'full_name': data.get('full_name', profile.full_name),
-    #     'email': data.get('email', user.email),
-    #     'location': data.get('location', profile.location),
-    #     'cohort': data.get('cohort', profile.cohort),
-    #     'bio': data.get('bio', profile.bio),
-    #     'facebook': data.get('facebook', profile.facebook),
-    #     'twitter': data.get('twitter', profile.twitter),
-    #     'linkedin': data.get('linkedin', profile.linkedin),
-    #     'updated': True,
-    # }
     data.update({
         'full_name': data.get('full_name', profile.full_name),
         'email': data.get('email', user.email),
@@ -152,10 +140,9 @@ def update_profile(request):
         'facebook': data.get('facebook', profile.facebook),
         'twitter': data.get('twitter', profile.twitter),
         'linkedin': data.get('linkedin', profile.linkedin),
+        'avatar': profile.avatar if profile.avatar else None,
         'updated': True,  # Update this in the profile later
     })
-
-    # print("DATA: ", data)
 
 
     serializer = UserSerializer(user, data=data, partial=True)
@@ -166,7 +153,11 @@ def update_profile(request):
         profile = get_object_or_404(Profile, user=user)
         profile.updated = True
         profile.save()
-        return Response(serializer.data)
+
+        response_data = serializer.data
+        print('PROFILEEEEEEEEEE',profile.avatar)
+        response_data['avatar'] = profile.avatar if profile.avatar else None
+        return Response(response_data)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -194,7 +185,6 @@ def github_callback(request):
 
     if token_response.ok:
         # Extract the access token from the response
-        # print(token_response.json())
         access_token = token_response.json().get('access_token')
 
         # Use the access token to fetch user data from GitHub
@@ -231,40 +221,14 @@ def github_callback(request):
                 primary_email = next((email['email'] for email in email_data if email.get('primary')), None)
 
             primary_email = primary_email if primary_email else ""
-            
-            # user, created = User.objects.get_or_create(username=username,
-            #                                            email=primary_email,
-            #                                            first_name=full_name)
-
+        
             with transaction.atomic():
                 user, created = User.objects.get_or_create(
                     username=username.lower(),
-                    # defaults={
-                    #     'email': primary_email,
-                    #     # Add other fields if needed
-                    # }
-                    # defaults={
-                    #     'email': primary_email,
-                    #     # Add other fields you want to update or create
-                    # }
                 )
 
-                # profile, profile_created = Profile.objects.update_or_create(
-                #     user=user,
-                #     defaults={
-                #         'full_name': full_name,
-                #         'location': location,
-                #         'cohort': '',
-                #     }
-                # )
                 profile, profile_created = Profile.objects.get_or_create(
                     user=user,
-                    # defaults={
-                    #     'full_name': full_name,
-                    #     'location': location,
-                    #     'bio': bio,
-                    #     'avatar': avatar_url,
-                    # }
                 )
 
                 # Only update fields if the profile has not been manually updated

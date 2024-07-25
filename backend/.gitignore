@@ -1,4 +1,9 @@
-venv/
 db.sqlite3
-.env
-*__pycache__
+venv
+*.pyc
+__pycache__
+media
+project_images
+static
+*.rest
+*.git

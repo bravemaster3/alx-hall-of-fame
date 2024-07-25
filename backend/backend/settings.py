@@ -12,41 +12,33 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-import rest_framework
 from datetime import timedelta
-from django.conf import settings
-from pathlib import Path
-from dotenv import load_dotenv
+import environ
+# from dotenv import load_dotenv
 
-# Load environment variables from .env file
-env_path = Path(__file__).resolve().parent.parent / '.env'
-load_dotenv(env_path)
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR_ENV = Path(__file__).resolve().parent.parent.parent
+env = environ.Env()
+environ.Env.read_env(BASE_DIR_ENV / '.env')
 
+SECRET_KEY = env('SECRET_KEY')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') # When debug is False, rest frame work doesn't load statics
+DEBUG = env.bool('DEBUG') # When debug is False, rest frame work doesn't load statics
 
 # Security settings for production
-if not DEBUG:
-    # Ensure security settings appropriate for production
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# if not DEBUG:
+#     # Ensure security settings appropriate for production
+#     SECURE_BROWSER_XSS_FILTER = True
+#     SECURE_CONTENT_TYPE_NOSNIFF = True
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#     SECURE_HSTS_PRELOAD = True
+#     SECURE_HSTS_SECONDS = 31536000  # 1 year
+#     SECURE_SSL_REDIRECT = True
+#     SESSION_COOKIE_SECURE = True
+#     CSRF_COOKIE_SECURE = True
+#     # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = ["*"]
 
@@ -69,8 +61,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'backend',
     'projects',
-    # 'djangoviz',
-    # 'django_extensions',
 ]
 
 REST_FRAMEWORK = {
@@ -92,7 +82,7 @@ SWAGGER_SETTINGS = {
 
 
 # Generate a new secret key for JWT signing
-JWT_SIGNING_KEY = os.getenv('JWT_SIGNING_KEY')
+JWT_SIGNING_KEY = env('JWT_SIGNING_KEY')
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -109,6 +99,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -140,42 +131,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': '',  # Leave empty for default port (5432)
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'alxhof',
-#         'USER': 'alxhof_admin',
-#         'PASSWORD': 'GX9NecQZvI2fuhputQXgNA',
-#         'HOST': 'alxhof-14252.8nj.gcp-europe-west1.cockroachlabs.cloud',
-#         'PORT': '26257',
-#         'OPTIONS': {
-#             'sslmode': 'verify-full',
-#             # 'sslrootcert': '<path-to-your-ca-cert>',  # If you have a CA certificate file
-#         },
-#     }
-# }
-
 
 
 # Password validation
@@ -208,45 +173,21 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-# STATIC_URL = 'static/'
-
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_FINDERS = [
-#     'django.contrib.staticfiles.finders.FileSystemFinder',
-#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-# ]
-
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
-# # STATIC_URL = '/static/'
-# STATIC_URL = '/staticfiles/'
-
-# # STATICFILES_DIRS = (
-# #     os.path.join(BASE_DIR, ''),
-# # )
-
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
-# ]
-
-STATIC_URL = '/staticfiles/'
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static") 
 
 # Media files (Uploads)
-MEDIA_URL = '/project_images/'
-MEDIA_ROOT = os.path.join(BASE_DIR, '')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
-SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
+SOCIAL_AUTH_GITHUB_KEY = env('SOCIAL_AUTH_GITHUB_KEY')
+
+SOCIAL_AUTH_GITHUB_SECRET = env('SOCIAL_AUTH_GITHUB_SECRET')
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
@@ -259,6 +200,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # Replace with your React app's domain
     'http://localhost:8000',
+    'http://localhost:80',
+    'http://localhost',
+    "https://localhost",
+    "http://79.76.63.253",
+    "https://79.76.63.253"
 ]
 
 

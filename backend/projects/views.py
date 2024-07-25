@@ -62,8 +62,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     # logger.info(f"Related users: {[user.username for user in project.users.all()]}")
                     
                     # Link project to author users
-                    # for author_user in author_users:
-                        # print("REACHED HERREEEEEEEEE")
                     project.users.add(*author_users)
                     
                     headers = self.get_success_headers(serializer.data)
@@ -106,18 +104,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response({"detail": "You do not have permission to delete this project."}, status=status.HTTP_403_FORBIDDEN)
 
         return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
-    
-    # @action(detail=False, methods=['put'], permission_classes=[permissions.IsAuthenticated])
-    # def update(self, request, *args, **kwargs):
-    #     # Only allow DELETE if the user is authenticated
-    #     if not request.user.is_authenticated:
-    #         return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
-    #     # Check if the user is the owner of the project
-    #     project = self.get_object()
-    #     if request.user != project.user:
-    #         return Response({"detail": "You do not have permission to edit this project."}, status=status.HTTP_403_FORBIDDEN)
-
-    #     return super(ProjectViewSet, self).update(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -176,18 +162,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response({'status': message, 'likes_count': project.total_likes()}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)  
-
-
-# class CommentViewSet(viewsets.ModelViewSet):
-#     queryset = Comment.objects.all().order_by('-created_at')
-#     serializer_class = CommentSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-#     # @action(detail=True, methods=['get', 'post', 'put'])
-#     def perform_create(self, serializer):
-#         project_id = self.kwargs['project_pk']
-#         project = get_object_or_404(Project, id=project_id)
-#         serializer.save(user=self.request.user, project=project)
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer

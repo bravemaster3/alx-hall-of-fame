@@ -6,23 +6,10 @@ from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.middleware import get_user
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-# def get_user_jwt(request):
-#     user = get_user(request)
-#     if user.is_authenticated:
-#         return user
-#     try:
-#         user_jwt = JWTAuthentication().authenticate(Request(request))
-#         if user_jwt is not None:
-#             return user_jwt[0]
-#     except:
-#         pass
-#     return user
-
 logger = logging.getLogger(__name__)
 
 def get_user_jwt(request):
     user = get_user(request)
-    # user = request.user
 
     if user.is_authenticated:
         return user

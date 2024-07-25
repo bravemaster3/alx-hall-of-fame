@@ -41,20 +41,20 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    re_path('test_token', views.test_token),
+    path('api/admin/', admin.site.urls),
+    re_path('api/test_token', views.test_token),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('social-auth/', include('social_django.urls', namespace='social')),
-    path('callback', views.github_callback, name='github_callback'),
-    path('users', views.all_users, name='all_users'),
-    path('users/<int:user_id>', views.get_user, name='specific_user'),
-    path('users/github/<str:github_username>/', views.get_user_by_github_username, name='get_user_by_github_username'),
-    path('users/update/', views.update_profile, name='update_profile'),
+    path('api/callback', views.github_callback, name='github_callback'),
+    path('api/users', views.all_users, name='all_users'),
+    path('api/users/<int:user_id>', views.get_user, name='specific_user'),
+    path('api/users/github/<str:github_username>/', views.get_user_by_github_username, name='get_user_by_github_username'),
+    path('api/users/update/', views.update_profile, name='update_profile'),
     path('api/users_with_profiles/', views.get_all_users_with_profiles, name='get_all_users_with_profiles'),
     path('api/', include('projects.urls')),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
