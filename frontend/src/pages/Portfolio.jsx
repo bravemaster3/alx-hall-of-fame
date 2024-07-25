@@ -25,7 +25,7 @@ const Portfolio = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          `${backendURL}/users/github/${github_username}`
+          `${backendURL}/api/users/github/${github_username}`
         )
         setUserProfile(response.data)
       } catch (error) {
@@ -56,8 +56,8 @@ const Portfolio = () => {
     <div className="max-w-full flex flex-col justify-center items-center px-5 mql750:px-20">
       {/* <Box className="flex items-center mb-8"> */}
       <img
-        src="../../src/assets/logo.png"
-        alt="ALX Hall of Fame"
+        src="/assets/logo.png"
+        alt="ALX HoF logo"
         className="w-[100px] cursor-pointer"
         onClick={() => navigate("/")}
       />

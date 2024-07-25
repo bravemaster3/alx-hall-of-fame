@@ -33,6 +33,8 @@ const Home = () => {
       .then((response) => {
         setProjects(response.data)
         setFilteredProjects(response.data)
+
+        // console.log("ALL PROJECTS::::", response.data)
       })
       .catch((error) => {
         console.error("There was an error fetching the projects!", error)

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import L from "leaflet"
+import icon from "leaflet/dist/images/marker-icon.png"
+import iconShadow from "leaflet/dist/images/marker-shadow.png"
 import "leaflet.markercluster/dist/MarkerCluster.css"
 import "leaflet.markercluster/dist/MarkerCluster.Default.css"
 import "leaflet/dist/leaflet.css"
@@ -9,6 +11,13 @@ import Modal from "@mui/material/Modal"
 import Box from "@mui/material/Box"
 import UserProfile from "./UserProfile"
 import "leaflet.markercluster"
+
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+})
+
+L.Marker.prototype.options.icon = DefaultIcon
 
 // Fetch users with profiles
 export const fetchUsersWithProfiles = async () => {
@@ -25,7 +34,7 @@ export const fetchUsersWithProfiles = async () => {
 const fetchUserProfile = async (githubUsername) => {
   try {
     const response = await axios.get(
-      `${backendURL}/users/github/${githubUsername}`
+      `${backendURL}/api/users/github/${githubUsername}`
     )
     return response.data
   } catch (error) {

@@ -22,7 +22,7 @@ const Profile = () => {
     if (profile?.username) {
       try {
         const response = await axios.get(
-          `${backendURL}/users/github/${profile.username}/`
+          `${backendURL}/api/users/github/${profile.username}/`
         )
         setProfile(response.data)
       } catch (error) {

@@ -130,9 +130,9 @@ export default function ProjectList({
   )
 }
 
-ProjectList.PropTypes = {
+ProjectList.propTypes = {
   projects: PropTypes.array.isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
-  githubUsername: PropTypes.string.isRequired,
+  // githubUsername: PropTypes.string.isRequired,
 }

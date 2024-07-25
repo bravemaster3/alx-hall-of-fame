@@ -99,7 +99,7 @@ export default function People() {
 
   useEffect(() => {
     axios
-      .get(`${backendURL}/users`)
+      .get(`${backendURL}/api/users`)
       .then((response) => {
         setUsers(response.data)
       })

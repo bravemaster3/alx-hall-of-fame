@@ -14,8 +14,6 @@ import {
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { allCohorts, backendURL, fetchAllCountries } from "../../constants"
-import FormInput from "../newProject/FormInput"
-import FormSelect from "../newProject/FormSelect"
 
 const ProfileEdit = () => {
   const [userProfile, setUserProfile] = useState(() => {
@@ -55,56 +53,17 @@ const ProfileEdit = () => {
     fetchCountries()
   }, [])
 
-  // useEffect(() => {
-  //   const fetchUserProfile = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${backendURL}/users/github/${userProfile.username}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${userProfile.token}`,
-  //           },
-  //         }
-  //       )
-  //       const userData = response.data
-  //       // console.log(userData)
-  //       setUserProfile(userData)
-  //     } catch (error) {
-  //       console.error("Error fetching user profile:", error)
-  //     }
-  //   }
-  //   // if (userProfile) {
-  //   fetchUserProfile()
-  //   // }
-  // }, [userProfile])
-
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
   }
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault()
-  //   console.log(formData)
-  //   try {
-  //     await axios.put(`${backendURL}/users/update/`, formData, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${userProfile.token}`,
-  //       },
-  //     })
-  //     navigate("/profile")
-  //   } catch (error) {
-  //     console.error("Error updating profile:", error)
-  //   }
-  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       // Submit the form data to the API
       const response = await axios.put(
-        `${backendURL}/users/update/`,
+        `${backendURL}/api/users/update/`,
         formData,
         {
           headers: {
@@ -130,6 +89,7 @@ const ProfileEdit = () => {
 
         // Update local storage with the merged profile
         localStorage.setItem("user", JSON.stringify(mergedProfile))
+        // console.log("UPDATED USER: ", mergedProfile)
 
         return mergedProfile
       })
@@ -141,20 +101,14 @@ const ProfileEdit = () => {
     }
   }
 
-  const textClassName = {
-    className:
-      "text-gray-300 dark:text-dark-gray-300 border-solid border-gray-100 dark:border-dark-gray-300",
-  }
+  const textClassName =
+    "text-gray-300 dark:text-dark-gray-300 border-solid border-gray-100 dark:border-dark-gray-300"
 
   return (
-    <Container
-      component="main"
-      maxWidth="sm"
-      // className="bg-white dark:bg-dark-white"
-    >
+    <Container component="main" maxWidth="sm">
       <Paper
         elevation={3}
-        // className="mt-1 p-5 bg-white dark:bg-dark-white text-gray-300 dark:text-white border-solid border-gray-100 dark:border-dark-gray-300"
+        style={{ backgroundColor: "rgba(240, 240, 240, 0.7)" }}
         className="mt-1 p-5 "
       >
         <Typography variant="h4" align="center" gutterBottom>
@@ -166,35 +120,6 @@ const ProfileEdit = () => {
           noValidate
           className="flex flex-col gap-1"
         >
-          {/* <FormInput
-            labelVal="Full Name"
-            idVal="full_name"
-            placeholderVal="Full name"
-            value={formData.full_name}
-            onChange={handleInputChange}
-          />
-          <FormInput
-            labelVal="Email"
-            idVal="email"
-            placeholderVal="Email"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
-          <FormSelect
-            labelVal="Country"
-            idVal="location"
-            options={countries}
-            value={formData.location}
-            onChange={handleInputChange}
-          />
-          <FormSelect
-            labelVal="Cohort"
-            idVal="cohort"
-            options={Object.keys(allCohorts)}
-            value={formData.cohort}
-            onChange={handleInputChange}
-          /> */}
-
           <TextField
             variant="outlined"
             margin="normal"
@@ -217,17 +142,6 @@ const ProfileEdit = () => {
             value={formData.email}
             onChange={handleInputChange}
           />
-          {/* <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="location"
-            label="Country"
-            name="location"
-            value={formData.location}
-            onChange={handleInputChange}
-          /> */}
           <FormControl
             variant="outlined"
             margin="normal"
@@ -268,17 +182,6 @@ const ProfileEdit = () => {
               ))}
             </Select>
           </FormControl>
-          {/* <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="cohort"
-            label="Cohort"
-            name="cohort"
-            value={formData.cohort}
-            onChange={handleInputChange}
-          /> */}
           <TextField
             variant="outlined"
             margin="normal"

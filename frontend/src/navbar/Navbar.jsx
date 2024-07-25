@@ -15,7 +15,7 @@ import MenuItem from "@mui/material/MenuItem"
 import AdbIcon from "@mui/icons-material/Adb"
 import GithubBtn from "./GithubBtn"
 import GithubAvatar from "./GithubAvatar"
-import { handleAuth, handleLogout } from "../../utils"
+import { handleAuth, handleLogout, useAuthTokenExpiration } from "../../utils"
 import axios from "axios"
 import { backendURL } from "../../constants"
 import DarkModeToggle from "./DarkModeToggle"
@@ -73,7 +73,7 @@ export default function Navbar({ user, setUser }) {
 
     try {
       const response = await axios.get(
-        `${backendURL}/callback?code=${authCode}`
+        `${backendURL}/api/callback?code=${authCode}`
       )
       const userData = response.data
       localStorage.setItem("user", JSON.stringify(userData))
@@ -105,6 +105,8 @@ export default function Navbar({ user, setUser }) {
     }
   }, [startAuth])
 
+  const token = user?.token
+  useAuthTokenExpiration(token, setUser)
   return (
     <AppBar
       position="static"
@@ -138,8 +140,8 @@ export default function Navbar({ user, setUser }) {
           >
             <a href="/">
               <img
-                src="/src/assets/logo.png"
-                alt="ALX Hall of Fame Logo"
+                src="/assets/logo.png"
+                alt="ALXHoF Logo"
                 title="ALX Hall of Fame"
                 className="w-[55px] h-[63px] mt-2"
               />
@@ -201,8 +203,8 @@ export default function Navbar({ user, setUser }) {
           >
             <a href="/">
               <img
-                src="/src/assets/logo.png"
-                alt="ALX Hall of Fame Logo"
+                src="/assets/logo.png"
+                alt="ALX HoF Logo"
                 title="ALX Hall of Fame"
                 className="w-[48px] h-[53px] mt-1"
               />

@@ -7,13 +7,20 @@ import {
   FaTrash,
   FaComment,
 } from "react-icons/fa"
-import { Box, Modal, Typography, Button } from "@mui/material"
+import { Box, Modal, Typography, Button, IconButton } from "@mui/material"
 import axios from "axios"
 import { backendURL } from "../../constants"
 import ProjectAuthorAvatar from "./ProjectAuthorAvatar"
 import UserProfile from "../pages/UserProfile"
 import { FaStar } from "react-icons/fa6"
-import { Comment, Delete, Edit, Favorite, Star } from "@mui/icons-material"
+import {
+  Close,
+  Comment,
+  Delete,
+  Edit,
+  Favorite,
+  Star,
+} from "@mui/icons-material"
 
 const ProjectCard = ({
   id,
@@ -174,7 +181,9 @@ const ProjectCard = ({
 
   const handleOpenUserProfileModal = async (username) => {
     try {
-      const response = await axios.get(`${backendURL}/users/github/${username}`)
+      const response = await axios.get(
+        `${backendURL}/api/users/github/${username}`
+      )
       setSelectedUserProfile(response.data)
       // console.log(response.data)
       setIsUserProfileModalOpen(true)
@@ -243,9 +252,6 @@ const ProjectCard = ({
   // console.log("AUTHORS", authors)
   const authorUsernames = authors.split(",").map((username) => username.trim())
 
-  // console.log("ACTIVE TAB: ", activeTab)
-  // console.log(githubUsername)
-  // console.log(project.user.username)
   return (
     <>
       <div className="w-[350px] rounded-3xs box-border flex flex-col items-end justify-start pt-[22px] pb-4 pr-[23px] pl-[21px] gap-[14px] min-w-[332px] max-w-full text-left text-sm text-gray-400 dark:text-dark-gray-400 font-inter border-[1px] border-solid border-gainsboro dark:border-dark-gainsboro">
@@ -258,9 +264,9 @@ const ProjectCard = ({
           onClick={handleOpenModal}
         />
         <div className="self-stretch flex flex-col items-start justify-start gap-[1px]">
-          <div className="self-stretch h-[30px] flex flex-col items-start justify-start px-0 pb-px box-border gap-[2px] text-5xl">
+          <div className="self-stretch min-h-[30px] flex flex-col items-start justify-start px-0 pb-px box-border gap-[2px] text-5xl">
             <h2
-              className="ml-[-2.2000000000000455px] m-0 self-stretch relative text-inherit dark:text-dark-black tracking-[-0.6px] font-normal font-inherit shrink-0 cursor-pointer"
+              className="ml-[-2.2000000000000455px] m-0 self-stretch relative text-inherit dark:text-dark-black tracking-[-0.6px] font-normal font-inherit shrink-0 cursor-pointer line-clamp-2 "
               onClick={handleOpenModal}
             >
               {title}
@@ -352,7 +358,8 @@ const ProjectCard = ({
           </div>
         </div>
         {/* </div> */}
-        {project.user.username.toLowerCase() === githubUsername.toLowerCase() &&
+        {project.user?.username.toLowerCase() ===
+          githubUsername?.toLowerCase() &&
           activeTab === "My Projects" && (
             <div className="flex w-full justify-between mt-auto">
               <Button onClick={() => onEdit(project)}>Edit</Button>
@@ -374,6 +381,12 @@ const ProjectCard = ({
 
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Box className=" w-[800px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-dark-white border-2 border-black dark:border-dark-black shadow-24 p-4 max-w-[90%] max-h-[85%] overflow-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-slate-500 scrollbar-track-slate-300">
+          <IconButton
+            onClick={handleCloseModal}
+            className="absolute top-2 right-2 text-gray-700 dark:text-gray-50"
+          >
+            <Close />
+          </IconButton>
           <Typography
             variant="h6"
             gutterBottom
