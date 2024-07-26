@@ -7,8 +7,8 @@ for (let i = 1; i <= 21; i++) {
   allCohorts[`C${i}`] = `ALX Cohort ${i}`;
 }
 
-export const backendURL = process.env.VITE_BACKEND_URL || "http://localhost:8000";
-export const frontendURL = process.env.VITE_FRONTEND_URL || "http://localhost:5173";
+export const backendURL = process.env.VITE_BACKEND_URL || "https://alxhof.kndev.org:80";
+export const frontendURL = process.env.VITE_FRONTEND_URL || "https://alxhof.kndev.org:80";
 export const githubClientID = process.env.VITE_GITHUB_CLIENT_ID || "3892f236d44713033395";
 
 let cachedCountries = null;
