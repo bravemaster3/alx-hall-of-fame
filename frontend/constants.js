@@ -10,8 +10,8 @@ for (let i = 1; i <= 21; i++) {
 // export const backendURL = process.env.VITE_BACKEND_URL || "https://alxhof.kndev.org:80";
 // export const frontendURL = process.env.VITE_FRONTEND_URL || "https://alxhof.kndev.org:80";
 // export const githubClientID = process.env.VITE_GITHUB_CLIENT_ID || "3892f236d44713033395";
-export const backendURL = "https://alxhof.kndev.org:80";
-export const frontendURL = "https://alxhof.kndev.org:80";
+export const backendURL = "https://alxhof.kndev.org";
+export const frontendURL = "https://alxhof.kndev.org";
 export const githubClientID = "3892f236d44713033395";
 
 let cachedCountries = null;
