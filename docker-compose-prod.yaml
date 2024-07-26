@@ -51,6 +51,10 @@ services:
       - react_build:/usr/src/app/dist
     env_file:
       - .env
+    environment:
+      - VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+      - VITE_FRONTEND_URL: ${VITE_FRONTEND_URL}
+      - VITE_FRONTEND_URL: ${VITE_MEDIA_URL}
 
   nginx:
     restart: always

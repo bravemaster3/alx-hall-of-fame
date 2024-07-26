@@ -46,27 +46,43 @@ const Profile = () => {
   }, [navigate])
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 600,
-        maxWidth: "90%",
-        bgcolor: "grey",
-        boxShadow: 24,
-        p: 2,
+    <Container
+      maxWidth="xl"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: theme.spacing(4),
+        borderRadius: theme.spacing(1),
+        minHeight: `calc(100vh - 60px - ${
+          theme.breakpoints.down("md") ? "54px" : "64px"
+        })`, // Adjust height calculation
+        boxSizing: "border-box",
       }}
     >
-      {/* <Container className="mt-[20px] bg-white dark:bg-dark-white"> */}
-      <UserProfile
-        userProfile={profile}
-        onEditClick={handleEditClick}
-        closable={false}
-      />
-      {/* </Container> */}
-    </Box>
+      <Box
+      // sx={{
+      //   position: "absolute",
+      //   top: "50%",
+      //   left: "50%",
+      //   transform: "translate(-50%, -50%)",
+      //   width: 600,
+      //   maxWidth: "90%",
+      //   bgcolor: "grey",
+      //   boxShadow: 24,
+      //   p: 2,
+      // }}
+      >
+        {/* <Container className="mt-[20px] bg-white dark:bg-dark-white"> */}
+        <UserProfile
+          userProfile={profile}
+          onEditClick={handleEditClick}
+          closable={false}
+        />
+        {/* </Container> */}
+      </Box>
+    </Container>
   )
 }
 

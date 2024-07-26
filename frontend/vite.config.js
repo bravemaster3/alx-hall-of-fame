@@ -17,7 +17,14 @@ export default defineConfig({
   },
   define: {
     'process.env': {}
-  }
+  },
+  build: {
+    sourcemap: false,
+    target: ['es2020'],
+  },
+  optimizeDeps: {
+    exclude: ['axios', 'react-icons/ai', 'react-icons/fa6'],
+  },
 })
 
 

@@ -7,6 +7,7 @@ import {
   Avatar,
   Grid,
   IconButton,
+  Divider,
 } from "@mui/material"
 import { GitHub, LinkedIn, Twitter } from "@mui/icons-material"
 import { useTheme } from "@mui/material/styles"
@@ -42,9 +43,12 @@ const About = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        // background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-        padding: theme.spacing(4),
+        padding: theme.spacing(2),
         borderRadius: theme.spacing(1),
+        minHeight: `calc(100vh - 60px - ${
+          theme.breakpoints.down("md") ? "54px" : "64px"
+        })`, // Adjust height calculation
+        boxSizing: "border-box",
       }}
     >
       <Paper
@@ -127,53 +131,104 @@ const About = () => {
           ))}
         </Grid>
 
-        <Typography variant="h5" gutterBottom style={{ marginTop: 24 }}>
-          Team
-        </Typography>
-        <Grid container spacing={2} justifyContent="center" alignItems="center">
+        <Divider
+          sx={{
+            width: "100%",
+            margin: theme.spacing(4, 0),
+            borderBottomWidth: 2,
+          }}
+        />
+
+        <Grid
+          container
+          spacing={2}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: {
+              xs: "column", // stack vertically on extra small screens
+              md: "row", // stack horizontally on medium and larger screens
+            },
+          }}
+        >
           <Grid
             item
             xs={12}
-            md={4}
+            md={2}
             style={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
             }}
           >
             <Avatar
               alt="Koffi Dodji Noumonvi"
               src="https://avatars.githubusercontent.com/u/39010414?v=4"
-              style={{ width: 100, height: 100 }}
+              style={{
+                width: "100%",
+                maxWidth: 150,
+                height: "auto",
+                marginRight: { xs: 0, md: theme.spacing(1) },
+                marginBottom: theme.spacing(2),
+              }}
             />
-            <Typography variant="subtitle1" style={{ marginTop: 8 }}>
-              Koffi Dodji Noumonvi
-            </Typography>
-            <Typography variant="subtitle2" style={{ marginTop: 8 }}>
-              Full Stack Software Engineer
-            </Typography>
-            <Box>
-              <IconButton
-                href="https://github.com/bravemaster3"
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                textAlign: { xs: "center", md: "left" },
+                alignItems: { xs: "center", md: "flex-start" },
+              }}
+            >
+              <Typography variant="h6">Koffi Dodji Noumonvi</Typography>
+              <Typography variant="subtitle1">
+                Full Stack Software Engineer
+              </Typography>
+              <Box
+                component="a"
+                href="https://www.buymeacoffee.com/bravemaster"
                 target="_blank"
                 rel="noopener"
+                sx={{
+                  alignItems: "center",
+                  textDecoration: "none",
+                  color: theme.palette.primary.main,
+                  fontWeight: "bold",
+                  marginTop: theme.spacing(1),
+                }}
               >
-                <GitHub />
-              </IconButton>
-              <IconButton
-                href="https://www.linkedin.com/in/koffi-dodji-noumonvi-8a578a89/"
-                target="_blank"
-                rel="noopener"
-              >
-                <LinkedIn />
-              </IconButton>
-              <IconButton
-                href="https://x.com/bravemaster3"
-                target="_blank"
-                rel="noopener"
-              >
-                <Twitter />
-              </IconButton>
+                <img
+                  src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                  alt="Buy Me A Coffee"
+                  style={{ height: 40, marginRight: theme.spacing(1) }}
+                />
+              </Box>
+              <Box>
+                <IconButton
+                  href="https://github.com/bravemaster3"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <GitHub />
+                </IconButton>
+                <IconButton
+                  href="https://www.linkedin.com/in/koffi-dodji-noumonvi-8a578a89/"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <LinkedIn />
+                </IconButton>
+                <IconButton
+                  href="https://x.com/bravemaster3"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <Twitter />
+                </IconButton>
+              </Box>
             </Box>
           </Grid>
         </Grid>
