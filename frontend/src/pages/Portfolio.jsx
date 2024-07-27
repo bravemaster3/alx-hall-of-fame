@@ -53,7 +53,7 @@ const Portfolio = () => {
   }
 
   return (
-    <div className="max-w-full flex flex-col justify-center items-center px-5 mql750:px-20">
+    <div className="max-w-full flex flex-col justify-center items-center px-5">
       {/* <Box className="flex items-center mb-8"> */}
       <img
         src="/assets/logo.png"
@@ -68,21 +68,29 @@ const Portfolio = () => {
         //   marginBottom: 20,
         //   width: "100%",
         // }}
-        className="flex items-center mb-5 max-w-[1000px]"
+        className="flex flex-col items-center"
       >
         {/* </div> */}
-        <Avatar
-          src={userProfile.avatar}
-          alt={userProfile.full_name || userProfile.username}
-          style={{ width: 80, height: 80, marginRight: 20 }}
-        />
-        <div>
-          <h2 className="text-black dark:text-dark-black">
+
+        <h2 className="text-black dark:text-dark-black">
+          {userProfile.full_name || userProfile.username}'s portfolio
+        </h2>
+        <div className="flex items-center mq750:flex-col mb-5 max-w-[1000px]">
+          <div className="mql750:mr-10">
+            <Avatar
+              src={userProfile.avatar}
+              alt={userProfile.full_name || userProfile.username}
+              style={{ width: 150, height: 150 }}
+            />
+          </div>
+          <div>
+            {/* <h2 className="text-black dark:text-dark-black">
             {userProfile.full_name || userProfile.username}'s portfolio
-          </h2>
-          <p className="text-black dark:text-dark-black">
-            {userProfile.bio || ""}
-          </p>
+          </h2> */}
+            <p className="text-black dark:text-dark-black">
+              {userProfile.bio || ""}
+            </p>
+          </div>
         </div>
       </div>
       <Divider className="mb-8 w-full bg-gray-300 dark:bg-dark-gray-300" />

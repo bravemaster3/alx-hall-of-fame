@@ -5,7 +5,7 @@ from .models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['full_name', 'location', 'cohort', 'bio', 'updated', 'facebook', 'twitter', 'linkedin']
+        fields = ['full_name', 'location', 'cohort', 'bio', 'updated', 'facebook', 'twitter', 'linkedin', 'avatar']
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='profile.full_name', required=False)
@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     twitter = serializers.URLField(source='profile.twitter', required=False, allow_blank=True, allow_null=True)
     linkedin = serializers.URLField(source='profile.linkedin', required=False, allow_blank=True, allow_null=True)
     avatar = serializers.URLField(source='profile.avatar', required=False)
+    
 
     class Meta:
         model = User
@@ -32,12 +33,18 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', {})
 
+
         # Update User instance
         instance.email = validated_data.get('email', instance.email)
         instance.save()
 
         # Update Profile instance
         profile = instance.profile
+
+        # print("PROFILE BEFORE:")
+        # for field in Profile._meta.fields:
+        #             print(f"{field.name}: {getattr(profile, field.name)}")
+
         profile.full_name = profile_data.get('full_name', profile.full_name)
         profile.location = profile_data.get('location', profile.location)
         profile.cohort = profile_data.get('cohort', profile.cohort)
@@ -48,5 +55,25 @@ class UserSerializer(serializers.ModelSerializer):
         profile.avatar = profile_data.get('avatar', profile.avatar)
         profile.save()
 
+        # print("PROFILE AFTER:")
+        # for field in Profile._meta.fields:
+        #             print(f"{field.name}: {getattr(profile, field.name)}")
+
+
         return instance
+
+    # def update(self, instance, validated_data):
+    #     profile_data = {key: value for key, value in validated_data.items() if key in self.Meta.fields and key != 'email'}
+
+    #     # Update User instance
+    #     instance.email = validated_data.get('email', instance.email)
+    #     instance.save()
+
+    #     # Update Profile instance
+    #     profile = instance.profile
+    #     for key, value in profile_data.items():
+    #         setattr(profile, key, value)
+    #     profile.save()
+
+    #     return instance
 

@@ -11,6 +11,7 @@ import Modal from "@mui/material/Modal"
 import Box from "@mui/material/Box"
 import UserProfile from "./UserProfile"
 import "leaflet.markercluster"
+import { Container } from "@mui/material"
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -29,6 +30,8 @@ export const fetchUsersWithProfiles = async () => {
     return []
   }
 }
+
+// const theme = useTheme()
 
 // Fetch a single user profile by GitHub username
 const fetchUserProfile = async (githubUsername) => {
@@ -126,27 +129,76 @@ const UsersMap = () => {
         open={isUserProfileModalOpen}
         onClose={handleCloseUserProfileModal}
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "grey",
+        {/* <Container
+          maxWidth="xl"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: theme.spacing(4),
+            borderRadius: theme.spacing(1),
+            minHeight: `calc(100vh - 60px - ${
+              theme.breakpoints.down("md") ? "54px" : "64px"
+            })`, // Adjust height calculation
+            boxSizing: "border-box",
             boxShadow: 24,
-            p: 2,
-            maxWidth: "90%",
           }}
         >
-          {selectedUserProfile && (
-            <UserProfile
-              userProfile={selectedUserProfile}
-              editable={false}
-              onCloseClick={handleCloseUserProfileModal}
-            />
-          )}
-        </Box>
+          <Box
+            sx={{
+              border: `2px solid ${theme.palette.grey[500]}`,
+            }}
+            // sx={{
+            //   position: "absolute",
+            //   top: "50%",
+            //   left: "50%",
+            //   transform: "translate(-50%, -50%)",
+            //   width: 600,
+            //   bgcolor: "grey",
+            //   boxShadow: 24,
+            //   p: 2,
+            //   maxWidth: "90%",
+            // }}
+          >
+            {selectedUserProfile && (
+              <UserProfile
+                userProfile={selectedUserProfile}
+                editable={false}
+                onCloseClick={handleCloseUserProfileModal}
+              />
+            )}
+          </Box>
+        </Container> */}
+
+        <Container
+          maxWidth="xl"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "16px", // Replacing theme.spacing(4)
+            borderRadius: "8px", // Replacing theme.spacing(1)
+            minHeight: `calc(100vh - 60px - 54px)`, // Simplified height calculation
+            boxSizing: "border-box",
+            boxShadow: "24px",
+          }}
+        >
+          <Box
+            sx={{
+              border: `10px solid #9e9e9e`, // Replacing theme.palette.grey[500]
+            }}
+          >
+            {selectedUserProfile && (
+              <UserProfile
+                userProfile={selectedUserProfile}
+                editable={false}
+                onCloseClick={handleCloseUserProfileModal}
+              />
+            )}
+          </Box>
+        </Container>
       </Modal>
     </>
   )

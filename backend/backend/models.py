@@ -16,3 +16,8 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    def save(self, *args, **kwargs):
+        print(f"Before save: {self.__dict__}")
+        super(Profile, self).save(*args, **kwargs)
+        print(f"After save: {self.__dict__}")

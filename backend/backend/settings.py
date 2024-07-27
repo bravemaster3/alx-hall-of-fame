@@ -143,6 +143,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -204,7 +205,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost',
     "https://localhost",
     "http://79.76.63.253",
-    "https://79.76.63.253"
+    "https://79.76.63.253",
+    "https://alxhof.kndev.org",
+    "http://alxhof.kndev.org"
 ]
 
 

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     restart: always
-    image: postgres:13.3
+    image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -58,7 +58,7 @@ services:
 
   nginx:
     restart: always
-    image: nginx:latest
+    image: nginx:alpine
     ports:
       - 80:8080
     volumes:

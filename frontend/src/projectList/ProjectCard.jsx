@@ -7,7 +7,14 @@ import {
   FaTrash,
   FaComment,
 } from "react-icons/fa"
-import { Box, Modal, Typography, Button, IconButton } from "@mui/material"
+import {
+  Box,
+  Modal,
+  Typography,
+  Button,
+  IconButton,
+  Container,
+} from "@mui/material"
 import axios from "axios"
 import { backendURL } from "../../constants"
 import ProjectAuthorAvatar from "./ProjectAuthorAvatar"
@@ -559,7 +566,7 @@ const ProjectCard = ({
         open={isUserProfileModalOpen}
         onClose={handleCloseUserProfileModal}
       >
-        <Box
+        {/* <Box
           sx={{
             position: "absolute",
             top: "50%",
@@ -578,7 +585,36 @@ const ProjectCard = ({
               onCloseClick={handleCloseUserProfileModal}
             />
           )}
-        </Box>
+        </Box> */}
+        <Container
+          maxWidth="xl"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "16px", // Replacing theme.spacing(4)
+            borderRadius: "8px", // Replacing theme.spacing(1)
+            minHeight: `calc(100vh - 60px - 54px)`, // Simplified height calculation
+            boxSizing: "border-box",
+            boxShadow: "24px",
+            outline: "None",
+          }}
+        >
+          <Box
+            sx={{
+              border: `10px solid #9e9e9e`, // Replacing theme.palette.grey[500]
+            }}
+          >
+            {selectedUserProfile && (
+              <UserProfile
+                userProfile={selectedUserProfile}
+                editable={false}
+                onCloseClick={handleCloseUserProfileModal}
+              />
+            )}
+          </Box>
+        </Container>
       </Modal>
     </>
   )

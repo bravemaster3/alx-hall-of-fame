@@ -63,6 +63,7 @@ def get_user(request, user_id):
                 'facebook': profile.facebook,
                 'twitter': profile.twitter,
                 'linkedin': profile.linkedin,
+                'avatar': profile.avatar,
                 'updated': profile.updated,
                 # Add other fields as needed
             }
@@ -74,26 +75,68 @@ def get_user(request, user_id):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# @api_view(['GET'])
+# def get_user_by_github_username(request, github_username):
+#     """Get user info by github_username"""
+#     user = get_object_or_404(User, username=github_username.lower())
+#     profile = get_object_or_404(Profile, user=user)
+#     # print("RETRIEVED PROFILE", profile.location)
+#     data = {
+#         'id': user.id,
+#         'username': user.username,
+#         'email': user.email,
+#         'full_name': profile.full_name,
+#         'location': profile.location,
+#         'cohort': profile.cohort,
+#         'bio': profile.bio,
+#         'facebook': profile.facebook,
+#         'twitter': profile.twitter,
+#         'linkedin': profile.linkedin,
+#         'avatar': profile.avatar,
+#         'updated': profile.updated,
+#         # Add other fields as needed
+#     }
+#     return Response(data)   
+# 
+
 @api_view(['GET'])
 def get_user_by_github_username(request, github_username):
     """Get user info by github_username"""
     user = get_object_or_404(User, username=github_username.lower())
-    profile = get_object_or_404(Profile, user=user)
+    
+    try:
+        profile = Profile.objects.get(user=user)
+        profile_data = {
+            'full_name': profile.full_name,
+            'location': profile.location,
+            'cohort': profile.cohort,
+            'bio': profile.bio,
+            'facebook': profile.facebook,
+            'twitter': profile.twitter,
+            'linkedin': profile.linkedin,
+            'avatar': profile.avatar,
+            'updated': profile.updated,
+            # Add other fields as needed
+        }
+    except Profile.DoesNotExist:
+        profile_data = {
+            'full_name': '',
+            'location': '',
+            'cohort': '',
+            'bio': '',
+            'facebook': '',
+            'twitter': '',
+            'linkedin': '',
+            'avatar': '',
+            'updated': None
+        }
     # print("RETRIEVED PROFILE", profile.location)
+
     data = {
         'id': user.id,
         'username': user.username,
         'email': user.email,
-        'full_name': profile.full_name,
-        'location': profile.location,
-        'cohort': profile.cohort,
-        'bio': profile.bio,
-        'facebook': profile.facebook,
-        'twitter': profile.twitter,
-        'linkedin': profile.linkedin,
-        'avatar': profile.avatar,
-        'updated': profile.updated,
-        # Add other fields as needed
+        **profile_data  # Merge profile data into the response
     }
     return Response(data)       
 
@@ -127,10 +170,25 @@ def update_profile(request):
     """Update user profile and user details"""
     # print("REACHED HERE")
     user = request.user
+    
     profile = get_object_or_404(Profile, user=user)
+
+    # print("Profile avatar", profile.avatar)
 
     # Combine user and profile data
     data = request.data.copy()
+    # data['profile'] = {
+    #     'full_name': data.get('full_name', profile.full_name),
+    #     'email': data.get('email', user.email),
+    #     'location': data.get('location', profile.location),
+    #     'cohort': data.get('cohort', profile.cohort),
+    #     'bio': data.get('bio', profile.bio),
+    #     'facebook': data.get('facebook', profile.facebook),
+    #     'twitter': data.get('twitter', profile.twitter),
+    #     'linkedin': data.get('linkedin', profile.linkedin),
+    #     'avatar': profile.avatar if profile.avatar else None,
+    #     'updated': True,
+    # }
     data.update({
         'full_name': data.get('full_name', profile.full_name),
         'email': data.get('email', user.email),
@@ -144,21 +202,24 @@ def update_profile(request):
         'updated': True,  # Update this in the profile later
     })
 
+    
+    # print("DATA: ", data)
 
     serializer = UserSerializer(user, data=data, partial=True)
-
     # print("VALIDITY::", serializer.is_valid())
     if serializer.is_valid():
+        # print("REACHED HERE:")
         serializer.save()
         profile = get_object_or_404(Profile, user=user)
         profile.updated = True
         profile.save()
 
         response_data = serializer.data
-        print('PROFILEEEEEEEEEE',profile.avatar)
+        # print('PROFILEEEEEEEEEE',profile.cohort)
         response_data['avatar'] = profile.avatar if profile.avatar else None
         return Response(response_data)
 
+    # print("Serializer errors:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -225,32 +286,52 @@ def github_callback(request):
             with transaction.atomic():
                 user, created = User.objects.get_or_create(
                     username=username.lower(),
+                    # defaults={
+                    #     'email': primary_email,
+                    # }
                 )
+
 
                 profile, profile_created = Profile.objects.get_or_create(
                     user=user,
+                    # defaults={
+                    #     'full_name': full_name,
+                    #     'location': location,
+                    #     'avatar': avatar_url,
+                    #     'bio': bio,
+                    # }
                 )
 
                 # Only update fields if the profile has not been manually updated
                 # The avatar will be updated each time a login occurs, insuring a change in github is also fetched
                 profile.avatar = avatar_url
+                # print("PROFILE:", profile)
                 profile.save()
-                if profile.updated is False:
+                if not profile.updated:
                     profile.full_name = full_name
                     profile.location = location
                     profile.bio = bio
                     profile.save()
                     user.email = primary_email
                     user.save()
-
+                    saved_profile = Profile.objects.get(user=user)
+                    # print("Saved avatar URL in database:", saved_profile.avatar)
+                    # print("PROFILE AVATAR URL NOT FROM THE DATABASE:", profile.avatar)
+                    # print("USER:", user)
                 else:
+                # if profile.updated:
                     primary_email = user.email
                     location = profile.location
                     full_name = profile.full_name
+                
+                # print(f"CREATION STATUS: USER~{created}, PROFILE~{profile_created}")
+                
+                # print("PROFILE FIELDS:")
+                # for field in Profile._meta.fields:
+                #     print(f"{field.name}: {getattr(profile, field.name)}")
 
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
-
             return JsonResponse({
                 "is_authenticated": True, 
                 # "token": access_token, 

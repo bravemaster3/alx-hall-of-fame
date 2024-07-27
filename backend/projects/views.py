@@ -103,6 +103,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if request.user != project.user:
             return Response({"detail": "You do not have permission to delete this project."}, status=status.HTTP_403_FORBIDDEN)
 
+        # Delete the media file associated with the project
+        if project.imgFile and project.imgFile.name:
+            project.imgFile.delete(save=False)
+
         return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
@@ -112,8 +116,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         if request.user != project.user:
             return Response({"detail": "You do not have permission to edit this project."}, status=status.HTTP_403_FORBIDDEN)
-
+        # Handle the imgFile field
+        img_file = request.FILES.get('imgFile')  # Get the uploaded file from request.FILES
         request.data._mutable = True
+        # if img_file:
+        #     # If a new image file is provided, it will be handled automatically by the serializer
+        #     request.data['imgFile'] = img_file
+        if img_file:
+        # **New Change**: If a new image file is provided, delete the old one
+            if project.imgFile and hasattr(project.imgFile, 'path'):
+                # **New Change**: Delete the old image file
+                old_img_file = project.imgFile
+            # **New Change**: Set the new image file in request data
+            request.data['imgFile'] = img_file
+        else:
+            # Preserve the existing image if no new image file is provided
+            request.data['imgFile'] = project.imgFile  # Keep the old image if none is provided
+
+        # request.data._mutable = True
         request.data['authors'] = request.data['authors'].lower()
 
         authors = request.data.get('authors', '')
@@ -129,10 +149,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
             request.data['authors'] = f"{request.user.username}, {request.data['authors']}"
             author_users.insert(0, request.user)
 
-        response = super(ProjectViewSet, self).update(request, *args, **kwargs)
-        if response.status_code == 200:
-            project.users.set(author_users)
-            response.data['authors'] = ', '.join(user.username for user in project.users.all()) # [user.username for user in project.users.all()]
+        serializer = self.get_serializer(project, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)  # Validate the data
+        # print("REACHED HERE")
+
+        self.perform_update(serializer) 
+
+        # **Only delete the old image if the update was successful**
+        if img_file and old_img_file and hasattr(old_img_file, 'path'):
+            old_img_file.delete(save=False)
+
+        # Set authors for the project
+        project.users.set(author_users)
+        response = Response(serializer.data)
+        response.data['authors'] = ', '.join(user.username for user in project.users.all())  # **CHANGED**: Update authors in the response
+
 
         return response
     

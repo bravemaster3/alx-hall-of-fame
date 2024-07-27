@@ -8,9 +8,10 @@ import {
   Grid,
   IconButton,
   Divider,
+  useTheme,
 } from "@mui/material"
 import { GitHub, LinkedIn, Twitter } from "@mui/icons-material"
-import { useTheme } from "@mui/material/styles"
+// import { useTheme } from "@mui/material/styles"
 import { FaReact, FaDocker } from "react-icons/fa"
 import {
   SiTailwindcss,

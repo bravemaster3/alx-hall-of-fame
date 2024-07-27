@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react"
-import { Modal, TextField, Button, Box, IconButton } from "@mui/material"
+import {
+  Modal,
+  TextField,
+  Button,
+  Box,
+  IconButton,
+  useTheme,
+} from "@mui/material"
 import PropTypes from "prop-types"
 import CloseIcon from "@mui/icons-material/Close"
 import FormInput from "./FormInput"
@@ -26,6 +33,7 @@ const ModalAddProject = ({
   }
 
   const [formData, setFormData] = useState(initialFormState)
+  const theme = useTheme()
 
   useEffect(() => {
     if (editProject) {

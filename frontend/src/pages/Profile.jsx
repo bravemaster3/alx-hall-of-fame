@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Box, Container } from "@mui/material"
+import { Box, Container, useTheme } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { backendURL } from "../../constants"
@@ -11,6 +11,7 @@ const Profile = () => {
     return storedUser ? JSON.parse(storedUser) : null
   })
   const navigate = useNavigate()
+  const theme = useTheme()
 
   // Fetch profile data on component mount
   useEffect(() => {
@@ -59,20 +60,24 @@ const Profile = () => {
           theme.breakpoints.down("md") ? "54px" : "64px"
         })`, // Adjust height calculation
         boxSizing: "border-box",
+        boxShadow: 24,
       }}
     >
       <Box
-      // sx={{
-      //   position: "absolute",
-      //   top: "50%",
-      //   left: "50%",
-      //   transform: "translate(-50%, -50%)",
-      //   width: 600,
-      //   maxWidth: "90%",
-      //   bgcolor: "grey",
-      //   boxShadow: 24,
-      //   p: 2,
-      // }}
+        sx={{
+          border: `10px solid ${theme.palette.grey[500]}`,
+        }}
+        // sx={{
+        //   position: "absolute",
+        //   top: "50%",
+        //   left: "50%",
+        //   transform: "translate(-50%, -50%)",
+        //   width: 600,
+        //   maxWidth: "90%",
+        //   bgcolor: "grey",
+        //   boxShadow: 24,
+        //   p: 2,
+        // }}
       >
         {/* <Container className="mt-[20px] bg-white dark:bg-dark-white"> */}
         <UserProfile

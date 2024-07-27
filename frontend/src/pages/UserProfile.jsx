@@ -54,43 +54,38 @@ const UserProfile = ({
         {closable && (
           <Close
             onClick={onCloseClick}
-            className="text-gray-700 dark:text-gray-50"
+            className="text-gray-700 dark:text-gray-50 cursor-pointer"
           />
         )}
       </div>
       <CardContent className="bg-white dark:bg-dark-white text-gray-300 dark:text-dark-gray-300">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: 20,
-          }}
-        >
+        <div className="flex align-center items-center mb-4 justify-center mq750:flex-col">
           <Avatar
             src={userProfile.avatar}
             alt={userProfile.full_name}
             style={{
-              width: 80,
-              height: 80,
-              maxWidth: "15vw",
-              maxHeight: "15vw",
+              width: 150,
+              height: 150,
               marginRight: 20,
+              marginBottom: 10,
             }}
           />
-          {/* <Avatar
-            src={userProfile.avatar}
-            alt={userProfile.full_name}
-            className="w-100 h-100 mr-5"
-          /> */}
-          <div>
-            <Typography variant="h5">
+          <div className="flex flex-col max-w-[100%] gap-y-2">
+            <Typography sx={{ typography: { sm: "h4", xs: "h5" } }}>
               {userProfile.full_name || userProfile.username}
             </Typography>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                wordWrap: "break-word",
+                maxWidth: "100%",
+              }}
+            >
               {userProfile.bio || "No bio available"}
             </Typography>
           </div>
         </div>
+
         <Divider sx={{ backgroundColor: "grey" }} />
         <div className="mt-5 mb-5">
           <Typography variant="body1">

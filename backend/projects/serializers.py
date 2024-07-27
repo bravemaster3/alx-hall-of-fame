@@ -19,7 +19,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     users = UserSerializer(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
     comments = CommentSerializer(many=True, read_only=True)
-    imgFile = serializers.SerializerMethodField()
+    # imgFile = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -30,10 +30,15 @@ class ProjectSerializer(serializers.ModelSerializer):
             'total_likes', 'likes_count'
         ]
     
-    def get_imgFile(self, obj):
-        if obj.imgFile:
-            return f"{settings.MEDIA_URL}{obj.imgFile.name}"  # This returns the relative path
-        return None
+    # def get_imgFile(self, obj):
+    #     if obj.imgFile:
+    #         return f"{settings.MEDIA_URL}{obj.imgFile.name}"  # This returns the relative path
+    #     return None
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.imgFile:
+            representation['imgFile'] = f"{settings.MEDIA_URL}{instance.imgFile.name}"
+        return representation
     
     def get_likes_count(self, obj):
         return obj.total_likes()

@@ -36,6 +36,7 @@ const ProfileEdit = () => {
     facebook: userProfile?.facebook || "",
     twitter: userProfile?.twitter || "",
     linkedin: userProfile?.linkedin || "",
+    // avatar: userProfile?.avatar || "",
   })
 
   const navigate = useNavigate()
@@ -75,6 +76,8 @@ const ProfileEdit = () => {
 
       // Get the updated user profile from the response
       const updatedUserProfile = response.data
+
+      // console.log("UPDATED USER", updatedUserProfile)
 
       // Update the state with the new user profile
       setUserProfile((prevProfile) => {

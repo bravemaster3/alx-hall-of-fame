@@ -89,7 +89,7 @@ export default function Navbar({ user, setUser }) {
           const confirmed = window.confirm("Please complete your profile now!")
           if (confirmed) navigate("/profile/edit")
         }
-      }, 10)
+      }, 100)
     } catch (error) {
       console.error("Error logging in:", error)
     }
