@@ -123,7 +123,7 @@ export default function Navbar({ user, setUser }) {
             width: "100%",
           }}
         >
-          <Typography
+          {/* <Typography
             variant="h6"
             noWrap
             component="a"
@@ -146,7 +146,17 @@ export default function Navbar({ user, setUser }) {
                 className="w-[55px] h-[63px] mt-2"
               />
             </a>
-          </Typography>
+          </Typography> */}
+          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
+            <a href="/">
+              <img
+                src="/assets/logo.png"
+                alt="ALXHoF Logo"
+                title="ALX Hall of Fame"
+                className="w-[55px] h-[63px] mt-2"
+              />
+            </a>
+          </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -184,21 +194,12 @@ export default function Navbar({ user, setUser }) {
               ))}
             </Menu>
           </Box>
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#"
+          <Box
             sx={{
-              mr: 2,
               display: { xs: "flex", md: "none" },
-              marginLeft: "60px",
+              // mr: 2,
               flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
+              marginLeft: "55px",
             }}
           >
             <a href="/">
@@ -209,7 +210,8 @@ export default function Navbar({ user, setUser }) {
                 className="w-[48px] h-[53px] mt-1"
               />
             </a>
-          </Typography>
+          </Box>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -241,8 +243,6 @@ export default function Navbar({ user, setUser }) {
 
             <Tooltip title="Profile" sx={{ display: "flex" }}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" /> */}
-                {/* <GithubAvatar user={user} /> */}
                 {user.is_authenticated ? (
                   <GithubAvatar user={user} />
                 ) : (
@@ -250,20 +250,6 @@ export default function Navbar({ user, setUser }) {
                 )}
               </IconButton>
             </Tooltip>
-
-            {/* <Typography sx={{ display: { xs: "none", md: "flex" } }}>
-              {" "}
-              {user.is_authenticated ? <GithubAvatar user={user} /> : null}
-            </Typography> */}
-
-            {/* {
-              user.is_authenticated ? <GithubAvatar user={user} /> : null
-              // <Tooltip title="Open settings">
-              //   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              //     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              //   </IconButton>
-              // </Tooltip>
-            } */}
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"

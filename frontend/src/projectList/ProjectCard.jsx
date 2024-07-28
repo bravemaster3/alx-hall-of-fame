@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { format } from "date-fns"
 import {
   FaGithub,
   FaExternalLinkAlt,
@@ -70,7 +71,12 @@ const ProjectCard = ({
         `${backendURL}/api/projects/${id}/comments/`
       )
       if (Array.isArray(response.data)) {
-        setComments(response.data)
+        // Sort comments by created_at in descending order
+        const sortedComments = response.data.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        )
+        setComments(sortedComments)
+        // setComments(response.data)
       } else {
         console.error("Unexpected data format:", response.data)
         setComments([])
@@ -204,25 +210,6 @@ const ProjectCard = ({
     setSelectedUserProfile(null)
   }
 
-  // useEffect(() => {
-  //   if (githubRepos) {
-  //     fetchGithubStars()
-  //   }
-  // }, [githubRepos])
-
-  // const fetchGithubStars = async () => {
-  //   try {
-  //     const repoName = githubRepos.split("/").pop()
-  //     const owner = githubRepos.split("/")[3]
-  //     const response = await axios.get(
-  //       `https://api.github.com/repos/${owner}/${repoName}`
-  //     )
-  //     setStars(response.data.stargazers_count)
-  //   } catch (error) {
-  //     console.error("Error fetching GitHub stars:", error)
-  //   }
-  // }
-
   useEffect(() => {
     if (githubRepos && !starsCache[githubRepos]) {
       fetchGithubStars()
@@ -278,9 +265,6 @@ const ProjectCard = ({
             >
               {title}
             </h2>
-            {/* <div className="ml-[-1px] w-[309.1px] relative text-xs tracking-[-0.6px] leading-[21px] inline-block shrink-0">
-              By: {authors}
-            </div> */}
           </div>
           <div className="ml-[-1px] w-full relative text-xs tracking-[-0.6px] shrink-0 flex flex-wrap items-center gap-2 text-gray-300 dark:text-dark-gray-300 text-center">
             By:
@@ -312,7 +296,7 @@ const ProjectCard = ({
               href={githubRepos}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative leading-[20px] whitespace-pre-wrap min-w-[113px] flex items-center gap-1"
+              className="text-gray-300 dark:text-dark-gray-300 relative leading-[20px] whitespace-pre-wrap min-w-[113px] flex items-center gap-1"
             >
               <FaGithub /> View on GitHub
             </a>
@@ -321,7 +305,7 @@ const ProjectCard = ({
                 href={liveProject}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-[90px] relative leading-[20px] text-right shrink-0 flex items-center gap-1"
+                className="text-gray-300 dark:text-dark-gray-300 w-[90px] relative leading-[20px] text-right shrink-0 flex items-center gap-1"
               >
                 <FaExternalLinkAlt /> Live Project
               </a>
@@ -354,7 +338,7 @@ const ProjectCard = ({
                 onClick={handleOpenModal}
                 titleAccess="Number of comments"
               />{" "}
-              {comments.length}
+              {commentsCount}
               {/* <FaComment
                 className="mr-2"
                 onClick={handleOpenModal}
@@ -481,7 +465,11 @@ const ProjectCard = ({
                   variant="body2"
                   className="text-gray-300 dark:text-dark-gray-300"
                 >
-                  {comment.user.username}: {comment.content}
+                  <strong>
+                    {comment.user.full_name || comment.user.username}
+                  </strong>{" "}
+                  {`[${format(new Date(comment.created_at), "PPPpp")}]`}{" "}
+                  {`: ${comment.content}`}
                 </Typography>
                 {localStorage.getItem("user") &&
                   comment.user.username ===
@@ -489,14 +477,14 @@ const ProjectCard = ({
                     <div className="flex gap-2 w-full justify-end">
                       <Edit
                         titleAccess="Edit comment"
-                        className="mr-2 text-gray-500"
+                        className="mr-2 text-gray-500 cursor-pointer"
                         onClick={() =>
                           handleEditComment(comment.id, comment.content)
                         }
                       />
                       <Delete
                         titleAccess="Delete comment"
-                        className="mr-2 text-red-500"
+                        className="mr-2 text-red-500 cursor-pointer"
                         onClick={() => handleDeleteComment(comment.id)}
                       />
                       {/* <Button
@@ -566,26 +554,6 @@ const ProjectCard = ({
         open={isUserProfileModalOpen}
         onClose={handleCloseUserProfileModal}
       >
-        {/* <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "grey",
-            boxShadow: 24,
-            p: 2,
-          }}
-        >
-          {selectedUserProfile && (
-            <UserProfile
-              userProfile={selectedUserProfile}
-              editable={false}
-              onCloseClick={handleCloseUserProfileModal}
-            />
-          )}
-        </Box> */}
         <Container
           maxWidth="xl"
           style={{

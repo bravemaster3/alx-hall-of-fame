@@ -1,64 +1,3 @@
-// // src/App.jsx
-// import {
-//   BrowserRouter as Router,
-//   Routes,
-//   Route,
-//   useLocation,
-// } from "react-router-dom"
-// import { useEffect, useState } from "react"
-// import Navbar from "./navbar/Navbar"
-// import Footer from "./footer/Footer"
-// import Home from "./pages/Home"
-// import About from "./pages/About" // Assuming you have an About page
-// import Profile from "./pages/Profile"
-// import ProfileEdit from "./pages/ProfileEdit"
-// import Login from "./pages/Login"
-// import UsersMap from "./pages/UsersMap"
-
-// const App = () => {
-
-//   const location = useLocation()
-
-//   // Define the routes that should not display the Navbar and Footer
-//   const noNavbarFooterRoutes = ["/login", "/portfolios/:github_username"]
-
-//   // Check if the current route matches any of the routes in the noNavbarFooterRoutes array
-//   const showNavbarFooter = !noNavbarFooterRoutes.some((route) =>
-//     location.pathname.match(new RegExp(`^${route}$`))
-//   )
-
-//   return (
-//     <Router>
-//       <div className="m-0 w-full min-h-screen bg-white dark:bg-dark-white flex flex-col justify-between">
-//         {showNavbarFooter && <Navbar />}
-//         {/* <Navbar /> */}
-//         <Routes>
-//           <Route
-//             path="/"
-//             element={
-//               <Home
-//               // githubUsername={githubUsername}
-//               // setGithubUsername={setGithubUsername}
-//               />
-//             }
-//           />
-//           <Route path="/profile" element={<Profile />} />
-//           <Route path="/profile/edit" element={<ProfileEdit />} />
-//           <Route path="/about" element={<About />} />
-//           <Route path="/login" element={<Login />} />
-//           <Route path="/map" element={<UsersMap />} />
-//           <Route path="/portfolios/:github_username" element={<Portfolio />} />
-//         </Routes>
-//         {showNavbarFooter && <Footer />}
-//         <Footer />
-//       </div>
-//     </Router>
-//   )
-// }
-
-// export default App
-
-// src/App.jsx
 import {
   BrowserRouter as Router,
   Routes,
@@ -68,7 +7,7 @@ import {
 import Navbar from "./navbar/Navbar"
 import Footer from "./footer/Footer"
 import Home from "./pages/Home"
-import About from "./pages/About" // Assuming you have an About page
+import About from "./pages/About"
 import Profile from "./pages/Profile"
 import ProfileEdit from "./pages/ProfileEdit"
 import Login from "./pages/Login"

@@ -1,90 +1,8 @@
-// import React, { useEffect, useState } from "react"
-// import { useNavigate } from "react-router-dom"
-// import axios from "axios"
-// import { backendURL } from "../../constants"
-// import { Box, Modal } from "@mui/material"
-// import UserProfile from "./UserProfile"
-
-// export default function People() {
-//   const [users, setUsers] = useState([])
-//   const [selectedUser, setSelectedUser] = useState(null)
-//   const [isUserProfileModalOpen, setIsUserProfileModalOpen] = useState(false)
-//   const navigate = useNavigate()
-
-//   useEffect(() => {
-//     axios
-//       .get(`${backendURL}/users`)
-//       .then((response) => {
-//         setUsers(response.data)
-//       })
-//       .catch((error) => {
-//         console.error("There was an error fetching the users!", error)
-//       })
-//   }, [])
-
-//   const handlePortfolioClick = (username) => {
-//     navigate(`/portfolios/${username}`)
-//   }
-
-//   const handleOpenUserProfileModal = (selectedUser) => {
-//     if (selectedUser) {
-//       setSelectedUser(selectedUser)
-//       setIsUserProfileModalOpen(true)
-//     }
-//   }
-
-//   const handleCloseUserProfileModal = () => {
-//     setIsUserProfileModalOpen(false)
-//     setSelectedUser(null)
-//   }
-
-//   return (
-//     <div>
-//       <h1>Users List</h1>
-//       <ul>
-//         {users.map((user) => (
-//           <li key={user.id}>
-//             {user.username}
-//             <button onClick={() => handleOpenUserProfileModal(user)}>
-//               Profile
-//             </button>
-//             <button onClick={() => handlePortfolioClick(user.username)}>
-//               Portfolio
-//             </button>
-//           </li>
-//         ))}
-//       </ul>
-
-//       <Modal
-//         open={isUserProfileModalOpen}
-//         onClose={handleCloseUserProfileModal}
-//       >
-//         <Box
-//           sx={{
-//             position: "absolute",
-//             top: "50%",
-//             left: "50%",
-//             transform: "translate(-50%, -50%)",
-//             width: 600,
-//             bgcolor: "grey",
-//             boxShadow: 24,
-//             p: 2,
-//           }}
-//         >
-//           {selectedUser && (
-//             <UserProfile userProfile={selectedUser} editable={false} />
-//           )}
-//         </Box>
-//       </Modal>
-//     </div>
-//   )
-// }
-
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { backendURL } from "../../constants"
-import { Box, Modal, IconButton } from "@mui/material"
+import { Box, Modal, IconButton, Container } from "@mui/material"
 import { GitHub, Facebook, Twitter, LinkedIn, Close } from "@mui/icons-material"
 import UserProfile from "./UserProfile"
 import SimpleSelect from "../filters/SimpleSelect"
@@ -125,11 +43,11 @@ export default function People() {
   }
 
   const filteredUsers = users.filter((user) => {
-    const term = searchTerm.toLowerCase()
+    const term = searchTerm.toString().toLowerCase()
     return (
-      (user.username.toLowerCase().includes(term) ||
-        user.full_name.toLowerCase().includes(term) ||
-        user.location.toLowerCase().includes(term)) &&
+      (user.username?.toString().toLowerCase().includes(term) ||
+        user.full_name?.toString().toLowerCase().includes(term) ||
+        user.location?.toString().toLowerCase().includes(term)) &&
       (selectedCohort === "All" || user.cohort === selectedCohort)
     )
   })
@@ -148,17 +66,16 @@ export default function People() {
             onChange={(e) => setSelectedCohort(e.target.value)}
           >
             <option value="All">All Cohorts</option>
-            {[...new Set(users.map((user) => user.cohort))].map((cohort) => (
+            {[
+              ...new Set(
+                users.map((user) => user.cohort).filter((cohort) => cohort)
+              ),
+            ].map((cohort) => (
               <option key={cohort} value={cohort}>
                 {cohort}
               </option>
             ))}
           </select>
-
-          {/* <SimpleSelect
-          selectedCohort={selectedCohort}
-          handleCohortChange={(e) => setSelectedCohort(e.target.value)}
-        /> */}
 
           <input
             type="text"
@@ -255,33 +172,34 @@ export default function People() {
           open={isUserProfileModalOpen}
           onClose={handleCloseUserProfileModal}
         >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "90%",
-              maxWidth: 600,
-              bgcolor: "white",
-              boxShadow: 24,
-              p: 2,
+          <Container
+            maxWidth="xl"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "16px",
+              borderRadius: "8px",
+              minHeight: `calc(100vh - 60px - 54px)`,
+              boxSizing: "border-box",
+              boxShadow: "24px",
             }}
           >
-            {/* <IconButton
-              sx={{ position: "absolute", top: 8, right: 8 }}
-              onClick={handleCloseUserProfileModal}
+            <Box
+              sx={{
+                border: `10px solid #9e9e9e`,
+              }}
             >
-              <Close />
-            </IconButton> */}
-            {selectedUser && (
-              <UserProfile
-                userProfile={selectedUser}
-                editable={false}
-                onCloseClick={handleCloseUserProfileModal}
-              />
-            )}
-          </Box>
+              {selectedUser && (
+                <UserProfile
+                  userProfile={selectedUser}
+                  editable={false}
+                  onCloseClick={handleCloseUserProfileModal}
+                />
+              )}
+            </Box>
+          </Container>
         </Modal>
       </div>
     </div>

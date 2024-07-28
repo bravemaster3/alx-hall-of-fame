@@ -39,7 +39,7 @@ export default function Filters({ activeTab, onFilter }) {
         value={searchTerm}
         onChange={handleSearchChange}
         sx={{
-          "& fieldset": { borderColor: "#e4e4e7" },
+          "& fieldset": { borderColor: "#0F172A" },
           "& .MuiInputBase-root": {
             height: "40px",
             backgroundColor: "#fff",
@@ -58,7 +58,7 @@ export default function Filters({ activeTab, onFilter }) {
           color: "#09090b", // Text color
           fontSize: "14px", // Adjust font size as needed
           background: "#fff", // White background
-          border: "#e4e4e7 solid 1px",
+          border: "#0F172A solid 1px",
           borderRadius: "4px",
           "&:hover": { background: "#fff" },
         }}
