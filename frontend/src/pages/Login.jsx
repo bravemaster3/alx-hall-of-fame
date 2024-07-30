@@ -19,7 +19,7 @@ const Login = ({ setUser }) => {
       <GithubBtn
         user={profile}
         BtnFunction={
-          profile.is_authenticated
+          profile?.is_authenticated
             ? () => {
                 handleLogout({ setUser })
                 setProfile(null)
