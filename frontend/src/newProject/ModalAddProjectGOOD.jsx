@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react"
-import { Modal, Button, Box, IconButton, useTheme } from "@mui/material"
+import {
+  Modal,
+  TextField,
+  Button,
+  Box,
+  IconButton,
+  useTheme,
+} from "@mui/material"
 import PropTypes from "prop-types"
 import CloseIcon from "@mui/icons-material/Close"
 import FormInput from "./FormInput"
@@ -7,7 +14,6 @@ import FormTextField from "./FormTextField"
 import UploadField from "./UploadFile"
 import axios from "axios"
 import { backendURL } from "../../constants"
-import GitHubRepoSearch from "./GitHubRepoSearch" // Import the new component
 
 const ModalAddProject = ({
   open,
@@ -15,7 +21,6 @@ const ModalAddProject = ({
   onProjectAdded,
   onProjectEdited,
   editProject,
-  githubUsername,
 }) => {
   const initialFormState = {
     projectTitle: "",
@@ -63,18 +68,6 @@ const ModalAddProject = ({
       ...prevData,
       imgFile: e.target.files[0],
     }))
-  }
-
-  const handleSelectRepo = (repo) => {
-    setFormData({
-      projectTitle: repo.name,
-      authors: githubUsername, // Assuming you have the username available
-      description: repo.description || "",
-      tags: "",
-      githubRepos: repo.html_url,
-      liveProject: "",
-      imgFile: null,
-    })
   }
 
   const handleSubmit = async (e) => {
@@ -153,10 +146,6 @@ const ModalAddProject = ({
             <h2 className="m-0 flex-1 relative text-5xl tracking-[-0.6px] leading-[24px] font-normal font-inter text-gray-300 dark:text-dark-gray-300 text-left inline-block max-w-full shrink-0 mq450:text-lgi mq450:leading-[19px]">
               {editProject ? "Edit Project" : "Add New Project"}
             </h2>
-            <GitHubRepoSearch
-              username={githubUsername} // Assuming you have the username available
-              onSelectRepo={handleSelectRepo}
-            />
             <FormInput
               labelVal="Project title"
               idVal="projectTitle"

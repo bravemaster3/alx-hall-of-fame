@@ -226,6 +226,7 @@ const Home = () => {
           onProjectAdded={handleProjectAdded}
           onProjectEdited={handleProjectEdited}
           editProject={editProject}
+          githubUsername={githubUsername}
         />
         {activeTab === "My Projects" ? (
           <div
