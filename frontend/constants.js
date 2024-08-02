@@ -13,6 +13,9 @@ for (let i = 1; i <= 21; i++) {
 export const backendURL = "https://alxhof.kndev.org";
 export const frontendURL = "https://alxhof.kndev.org";
 export const githubClientID = "3892f236d44713033395";
+// export const backendURL = "http://localhost:8000";
+// export const frontendURL = "http://localhost";
+// export const githubClientID = "Ov23ctsK0SUTT4j9w0iz";
 
 let cachedCountries = null;
 

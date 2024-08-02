@@ -41,7 +41,7 @@ const ProfileEdit = () => {
 
   const navigate = useNavigate()
 
-  if (!userProfile || !userProfile.is_authenticated) {
+  if (!userProfile || !userProfile?.is_authenticated) {
     return <Typography variant="h6">User not authenticated</Typography>
   }
 

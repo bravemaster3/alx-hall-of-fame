@@ -62,3 +62,9 @@ curl -X POST http://localhost:8000/api/comments/ \
 
 ### DELETING A COMMENT
 curl -X DELETE http://localhost:8000/api/projects/1/comments/1/ -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE5ODg5Njg4LCJpYXQiOjE3MTk4MDMyODgsImp0aSI6IjIyNDAzMmFmOTQwMjQ0NmY4NGJkNTMyNGM4NWYxOTQ4IiwidXNlcl9pZCI6MX0.TIMLigm7yOd902CQQ6TIGReVYFQg8lC-Aydga3SYC7U"
+
+
+### Testing collaborators
+GET https://api.github.com/repos/bravemaster3/huhola/collaborators
+Authorization: Bearer <token>
+Accept: application/vnd.github.v3+json

@@ -334,7 +334,7 @@ def github_callback(request):
             refresh = RefreshToken.for_user(user)
             return JsonResponse({
                 "is_authenticated": True, 
-                # "token": access_token, 
+                "github_token": access_token, 
                 "full_name": full_name, 
                 "token": str(refresh.access_token),
                 "refresh": str(refresh),

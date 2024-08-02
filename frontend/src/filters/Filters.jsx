@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 
 export default function Filters({ activeTab, onFilter }) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCohort, setSelectedCohort] = useState("")
+  const [selectedCohort, setSelectedCohort] = useState("All")
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
@@ -21,7 +21,10 @@ export default function Filters({ activeTab, onFilter }) {
   // }, [selectedCohort])
 
   const handleFilterClick = () => {
+    // onFilter({ searchTerm, selectedCohort })
     onFilter({ searchTerm, selectedCohort })
+    setSearchTerm("")
+    setSelectedCohort("All")
   }
 
   return (

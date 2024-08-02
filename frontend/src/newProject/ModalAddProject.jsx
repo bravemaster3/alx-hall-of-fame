@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react"
-import {
-  Modal,
-  TextField,
-  Button,
-  Box,
-  IconButton,
-  useTheme,
-} from "@mui/material"
+import { Modal, Button, Box, IconButton, useTheme } from "@mui/material"
 import PropTypes from "prop-types"
 import CloseIcon from "@mui/icons-material/Close"
 import FormInput from "./FormInput"
@@ -14,6 +7,7 @@ import FormTextField from "./FormTextField"
 import UploadField from "./UploadFile"
 import axios from "axios"
 import { backendURL } from "../../constants"
+import GitHubRepoSearch from "./GitHubRepoSearch" // Import the new component
 
 const ModalAddProject = ({
   open,
@@ -21,6 +15,7 @@ const ModalAddProject = ({
   onProjectAdded,
   onProjectEdited,
   editProject,
+  githubUsername,
 }) => {
   const initialFormState = {
     projectTitle: "",
@@ -33,6 +28,8 @@ const ModalAddProject = ({
   }
 
   const [formData, setFormData] = useState(initialFormState)
+  const [collaborators, setCollaborators] = useState("")
+  const [repoTags, setRepoTags] = useState("")
   const theme = useTheme()
 
   useEffect(() => {
@@ -46,13 +43,19 @@ const ModalAddProject = ({
         liveProject: editProject.liveProject,
         imgFile: editProject.imgFile,
       })
+      setCollaborators(editProject.collaborators || "")
+      setRepoTags(editProject.tags || "")
     } else {
       setFormData(initialFormState)
+      setCollaborators("")
+      setRepoTags("")
     }
   }, [editProject])
 
   const handleFormReset = () => {
     setFormData(initialFormState)
+    setCollaborators("")
+    setRepoTags("")
   }
 
   const handleInputChange = (e) => {
@@ -68,6 +71,52 @@ const ModalAddProject = ({
       ...prevData,
       imgFile: e.target.files[0],
     }))
+  }
+
+  const handleSelectRepo = async (repo) => {
+    // Fetch collaborators and tags from the selected repo
+    const fetchedCollaborators = await fetchRepoDetails(repo.html_url)
+
+    setFormData({
+      projectTitle: repo.name,
+      authors: fetchedCollaborators || githubUsername, // Use fetched collaborators or fallback to githubUsername
+      description: repo.description || "",
+      tags: repo.tags || repoTags || "",
+      githubRepos: repo.html_url || "",
+      liveProject: repo.homepage || "",
+      imgFile: null,
+    })
+  }
+
+  const fetchRepoDetails = async (repoUrl) => {
+    const userInfo = JSON.parse(localStorage.getItem("user"))
+    const accessToken = userInfo?.github_token
+
+    try {
+      const repoName = repoUrl.split("/").slice(-2).join("/") // Get repo name from URL
+      const response = await axios.get(
+        `https://api.github.com/repos/${repoName}/collaborators`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+        }
+      )
+      console.log("RESPONSE STATUS: ", response.status)
+      if (response.status === 200) {
+        const collaboratorsList = response.data.map((c) => c.login).join(", ")
+        console.log("COLLABORATORS: ", collaboratorsList)
+        setCollaborators(collaboratorsList)
+        return collaboratorsList
+      } else {
+        console.error("Failed to fetch collaborators:", response.statusText)
+        return ""
+      }
+    } catch (error) {
+      console.error("Error fetching collaborators:", error)
+      return ""
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -146,6 +195,10 @@ const ModalAddProject = ({
             <h2 className="m-0 flex-1 relative text-5xl tracking-[-0.6px] leading-[24px] font-normal font-inter text-gray-300 dark:text-dark-gray-300 text-left inline-block max-w-full shrink-0 mq450:text-lgi mq450:leading-[19px]">
               {editProject ? "Edit Project" : "Add New Project"}
             </h2>
+            <GitHubRepoSearch
+              username={githubUsername} // Assuming you have the username available
+              onSelectRepo={handleSelectRepo}
+            />
             <FormInput
               labelVal="Project title"
               idVal="projectTitle"
@@ -219,6 +272,7 @@ ModalAddProject.propTypes = {
   onProjectAdded: PropTypes.func.isRequired,
   onProjectEdited: PropTypes.func.isRequired,
   editProject: PropTypes.object,
+  githubUsername: PropTypes.string, // Added for completeness
 }
 
 export default ModalAddProject
