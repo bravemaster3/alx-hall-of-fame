@@ -6,8 +6,13 @@ import {jwtDecode} from "jwt-decode";
 // import { useNavigate } from "react-router-dom";
 
 export function handleAuth (){
-  window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientID}`
+  // window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientID}`
+  window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientID}&scope=repo`;
 }
+// export function handleAuth() {
+//   window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientID}&scope=repo:status,repo:invite,read:repo_hook,read:org,read:user`;
+// }
+
 
 
 // export function handleLogout (setUser){

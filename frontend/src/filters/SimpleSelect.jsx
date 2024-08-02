@@ -8,9 +8,10 @@ export default function SimpleSelect({ selectedCohort, handleCohortChange }) {
       value={selectedCohort}
       onChange={handleCohortChange}
     >
-      <option value="" disabled>
+      {/* <option value="" disabled>
         Filter by cohort
-      </option>
+      </option> */}
+      <option value="All">All Cohorts</option>
       {Object.keys(allCohorts).map((cohort) => (
         <option key={cohort} value={cohort}>
           {allCohorts[cohort]}

@@ -28,6 +28,8 @@ const ModalAddProject = ({
   }
 
   const [formData, setFormData] = useState(initialFormState)
+  const [collaborators, setCollaborators] = useState("")
+  const [repoTags, setRepoTags] = useState("")
   const theme = useTheme()
 
   useEffect(() => {
@@ -41,13 +43,19 @@ const ModalAddProject = ({
         liveProject: editProject.liveProject,
         imgFile: editProject.imgFile,
       })
+      setCollaborators(editProject.collaborators || "")
+      setRepoTags(editProject.tags || "")
     } else {
       setFormData(initialFormState)
+      setCollaborators("")
+      setRepoTags("")
     }
   }, [editProject])
 
   const handleFormReset = () => {
     setFormData(initialFormState)
+    setCollaborators("")
+    setRepoTags("")
   }
 
   const handleInputChange = (e) => {
@@ -65,16 +73,50 @@ const ModalAddProject = ({
     }))
   }
 
-  const handleSelectRepo = (repo) => {
+  const handleSelectRepo = async (repo) => {
+    // Fetch collaborators and tags from the selected repo
+    const fetchedCollaborators = await fetchRepoDetails(repo.html_url)
+
     setFormData({
       projectTitle: repo.name,
-      authors: githubUsername, // Assuming you have the username available
+      authors: fetchedCollaborators || githubUsername, // Use fetched collaborators or fallback to githubUsername
       description: repo.description || "",
-      tags: "",
-      githubRepos: repo.html_url,
-      liveProject: "",
+      tags: repo.tags || repoTags || "",
+      githubRepos: repo.html_url || "",
+      liveProject: repo.homepage || "",
       imgFile: null,
     })
+  }
+
+  const fetchRepoDetails = async (repoUrl) => {
+    const userInfo = JSON.parse(localStorage.getItem("user"))
+    const accessToken = userInfo?.github_token
+
+    try {
+      const repoName = repoUrl.split("/").slice(-2).join("/") // Get repo name from URL
+      const response = await axios.get(
+        `https://api.github.com/repos/${repoName}/collaborators`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+        }
+      )
+      console.log("RESPONSE STATUS: ", response.status)
+      if (response.status === 200) {
+        const collaboratorsList = response.data.map((c) => c.login).join(", ")
+        console.log("COLLABORATORS: ", collaboratorsList)
+        setCollaborators(collaboratorsList)
+        return collaboratorsList
+      } else {
+        console.error("Failed to fetch collaborators:", response.statusText)
+        return ""
+      }
+    } catch (error) {
+      console.error("Error fetching collaborators:", error)
+      return ""
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -230,6 +272,7 @@ ModalAddProject.propTypes = {
   onProjectAdded: PropTypes.func.isRequired,
   onProjectEdited: PropTypes.func.isRequired,
   editProject: PropTypes.object,
+  githubUsername: PropTypes.string, // Added for completeness
 }
 
 export default ModalAddProject

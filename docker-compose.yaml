@@ -7,7 +7,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -32,7 +34,7 @@ services:
     volumes:
       - .:/usr/src/app
       # - ./.env:/app/django/.env  # Mount the .env file as a volume
-      - ./.env:/usr/src/app/.env 
+      - ./.env:/usr/src/.env 
     ports:
       - "8000:8000"
     env_file:

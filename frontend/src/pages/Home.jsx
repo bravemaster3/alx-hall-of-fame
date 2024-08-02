@@ -203,6 +203,7 @@ const Home = () => {
   //   </main>
   // )
 
+  // console.log(localStorage.getItem("user"))
   return (
     <main className="self-stretch flex flex-row items-start justify-center pt-0 px-5 pb-[15px] box-border max-w-full shrink-0">
       <section className="w-[1480px] flex flex-col items-start justify-start gap-[35px] max-w-full mq750:gap-[15px]">
