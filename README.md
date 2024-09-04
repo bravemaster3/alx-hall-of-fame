@@ -1,6 +1,3 @@
-Certainly! Here is the detailed and nicely formatted `README.md`:
-
----
 
 ![ALX Hall of Fame](https://img.shields.io/badge/ALX-Hall%20of%20Fame-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
@@ -113,7 +110,3 @@ Contributions are what make the open source community such an amazing place to b
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-Feel free to modify this template as per your needs. This `README.md` provides a comprehensive overview of your project, including installation instructions, usage guidelines, and contribution steps.
